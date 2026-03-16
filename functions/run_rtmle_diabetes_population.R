@@ -5,18 +5,7 @@ run_rtmle_diabetes_population <- function(diabetes_population,time_horizon){
         library(data.table)
         tar_load(diabetes_population)
     }
-    setkey(diabetes_population,id,time)
-    bsl <- diabetes_population[event == "baseline"]
     setkey(diabetes_population,id,time,event)
-    # find censored
-    diabetes_population[, has_event := any(event%in%c("MACE","death")),by = id]
-    event_time_data <- rbind(diabetes_population[event%in%c("MACE","death"),.(time = time[1],event = event[1]),by = id],
-                             diabetes_population[!(has_event),.(time = max(time),event = "censored"),by = id])
-    bsl[,time := NULL]
-    bsl[,event := NULL]
-    bsl <- event_time_data[bsl,on = "id"]
-    bsl[,treatment := factor(GLP1+2*SGLT2+3*DPP4,levels = 1:3,labels = c("GLP1","SGLT2","DPP4"))]
-    ggplot(bsl,aes(x = time,event = event,color = treatment))+geom_prodlim()+xlim(c(0,50))
     intervals <- seq(0,60,6)
     x <- rtmle_init(intervals = length(intervals)-1,
                     name_id = "id",
@@ -62,9 +51,11 @@ run_rtmle_diabetes_population <- function(diabetes_population,time_horizon){
                 estimator = "tmle",
                 protocols = c("Always_SGLT2","Always_GLP1","Always_DPP4"))
     x <- prepare_data(x)
-    x <- model_formula(x)
+    x <- model_formula(x,exclusion_rules = list("SGLT2_0" = c("GLP1_0","DPP4_0"),
+                                                "GLP1_0" = c("SGLT2_0","DPP4_0"),
+                                                "DPP4_0" = c("SGLT2_0","GLP1_0")))
     x <- run_rtmle(x,
                    time_horizon = time_horizon,
-                   learner = "learn_glm")
+                   learner = "learn_glmnet")
     return(x)
 }

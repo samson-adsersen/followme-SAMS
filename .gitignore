@@ -26,6 +26,4 @@
 *.utf8.md
 *.knit.md
 
-sandbox.R
-
 /_targets/

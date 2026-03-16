@@ -86,6 +86,7 @@ simulate_cohort <- function(n,
     
     absorbing_events_model <- make_regression_model(outcome_variables = absorbing_events,
                                                     parameter_values = parameter_values)
+
     # initialize event_history at time 0 
     init_visit_events <- data.table(as.data.frame(as.list(sapply(names(visit_events),function(v){0}))))
     event_history <- cbind(data.table(time = 0,event = "baseline"),X_baseline,init_visit_events)
