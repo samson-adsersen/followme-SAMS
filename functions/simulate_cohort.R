@@ -82,7 +82,6 @@ simulate_cohort <- function(n,
     at_risk_event_history = event_history
 
     while (nrow(at_risk_event_history)>0) {
-
         ## n_at_risk <- at_risk_event_history[, length(unique(id))]
         setorder(at_risk_event_history, id, time)
         last_entry <- at_risk_event_history[,.SD[.N],id]

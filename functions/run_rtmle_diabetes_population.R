@@ -1,4 +1,4 @@
-run_rtmle_diabetes_population <- function(diabetes_population){
+run_rtmle_diabetes_population <- function(diabetes_population,time_horizon){
     if (FALSE){
         library(rtmle)
         library(targets)
@@ -6,8 +6,24 @@ run_rtmle_diabetes_population <- function(diabetes_population){
         tar_load(diabetes_population)
     }
     setkey(diabetes_population,id,time)
+    bsl <- diabetes_population[event == "baseline"]
+    setkey(diabetes_population,id,time,event)
+    # find censored
+    diabetes_population[, has_event := any(event%in%c("MACE","death")),by = id]
+    event_time_data <- rbind(diabetes_population[event%in%c("MACE","death"),.(time = time[1],event = event[1]),by = id],
+                             diabetes_population[!(has_event),.(time = max(time),event = "censored"),by = id])
+    bsl[,time := NULL]
+    bsl[,event := NULL]
+    bsl <- event_time_data[bsl,on = "id"]
+    bsl[,treatment := factor(GLP1+2*SGLT2+3*DPP4,levels = 1:3,labels = c("GLP1","SGLT2","DPP4"))]
+    ggplot(bsl,aes(x = time,event = event,color = treatment))+geom_prodlim()+xlim(c(0,50))
     intervals <- seq(0,60,6)
-    x <- rtmle_init(intervals = length(intervals)-1,name_id = "id",name_outcome = "MACE",name_competing = "death",name_censoring = "Censored",censored_label = "censored")
+    x <- rtmle_init(intervals = length(intervals)-1,
+                    name_id = "id",
+                    name_outcome = "MACE",
+                    name_competing = "death",
+                    name_censoring = "Censored",
+                    censored_label = "censored")
     diabetes_population[, last := as.integer(.I == .I[.N]), by = id]
     diabetes_population[, first := as.integer(.I == .I[1L]), by = id]
     ## diabetes_population[last == 1,table(event)]
@@ -36,18 +52,19 @@ run_rtmle_diabetes_population <- function(diabetes_population){
                        timevar_data=tv)
     x <- add_baseline_data(x,data=diabetes_population[first == 1,.(id,sex,age)])
     x <- long_to_wide(x,breaks = intervals,start_followup_date = 0)
-    x <- protocol(x,name = "Always_GLP1",
-                  intervention = data.table(time = x$intervention_nodes,"GLP1" = factor(rep("1",length(intervals)-1),levels = c("0","1"))))
     x <- protocol(x,name = "Always_SGLT2",
                   intervention = data.table(time = x$intervention_nodes,"SGLT2" = factor(rep("1",length(intervals)-1),levels = c("0","1"))))
+    x <- protocol(x,name = "Always_DPP4",
+                  intervention = data.table(time = x$intervention_nodes,"DPP4" = factor(rep("1",length(intervals)-1),levels = c("0","1"))))
+    x <- protocol(x,name = "Always_GLP1",
+                  intervention = data.table(time = x$intervention_nodes,"GLP1" = factor(rep("1",length(intervals)-1),levels = c("0","1"))))
     x <- target(x,name = "Outcome_risk",
                 estimator = "tmle",
-                protocols = c("Always_GLP1","Always_SGLT2"))
+                protocols = c("Always_SGLT2","Always_GLP1","Always_DPP4"))
     x <- prepare_data(x)
     x <- model_formula(x)
-    x$followup[,table(last_interval)]
     x <- run_rtmle(x,
-                   time_horizon = 2,
-                   learner = "learn_glmnet")
+                   time_horizon = time_horizon,
+                   learner = "learn_glm")
     return(x)
 }

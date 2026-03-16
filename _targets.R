@@ -3,9 +3,9 @@
 ## Author: Thomas Alexander Gerds
 ## Created: okt 23 2025 (15:22) 
 ## Version: 
-## Last-Updated: mar 13 2026 (13:37) 
+## Last-Updated: mar 16 2026 (08:06) 
 ##           By: Thomas Alexander Gerds
-##     Update #: 19
+##     Update #: 24
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -19,7 +19,7 @@ library(targets)
 library(lava)
 library(data.table)
 tar_source("functions")
-tar_option_set(packages = c("lava","survival","data.table","prodlim","rtmle","foreach"))
+tar_option_set(packages = c("lava","survival","data.table","prodlim","rtmle","foreach","ggplot2","plotly"))
 list(
     tar_target(name = diabetes_polypharmacy_setting,{
         command =
@@ -28,7 +28,7 @@ list(
     tar_target(name = diabetes_population,{ 
         command ={
             simulate_diabetes_population(diabetes_polypharmacy_setting = diabetes_polypharmacy_setting,
-                                         initial_treatment = list(GLP1 = 577,SGLT2 = 801,DPP4 = 1304))
+                                         initial_treatment = list(GLP1 = 2801,SGLT2 = 1577,DPP4 = 3304))
         }
     },cue = tar_cue(mode = "thorough")),
     tar_target(name = rtmle_diabetes_population,
