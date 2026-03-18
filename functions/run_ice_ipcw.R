@@ -3,9 +3,9 @@
 ## Author: Johan Sebastian Ohlendorff
 ## Created: Mar 16 2026 (11:52) 
 ## Version: 
-## Last-Updated: Mar 18 2026 (13:00) 
+## Last-Updated: Mar 18 2026 (16:54) 
 ##           By: Johan Sebastian Ohlendorff
-##     Update #: 103
+##     Update #: 127
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -19,12 +19,17 @@ run_ice_ipcw <- function(data,
                          time_horizon,
                          primary_event = "MACE",
                          model_pseudo_outcome = "lm",
-                         penalize_pseudo_outcome = FALSE,
-                         regimens = c("GLP1", "SGLT2", "DPP4")){
+                         penalize_pseudo_outcome = TRUE,
+                         regimens = c("GLP1", "SGLT2", "DPP4"),
+                         verbose = FALSE){
     ## Check if contICEIPCW is installed, if not install it from GitHub
     if (!requireNamespace("contICEIPCW", quietly = TRUE)) {
-        requireNamespace("devtools", quietly = TRUE)
-        devtools::install_github("jsohlendorff/contICEIPCW")
+        ## Check that version of "contICEIPCW" is new enough
+        if (packageVersion("contICEIPCW") <= "0.0.9000") {
+            requireNamespace("devtools", quietly = TRUE)
+            message("Installing contICEIPCW from GitHub...")
+            devtools::install_github("jsohlendorff/contICEIPCW")
+        }
     }
     ## require(contICEIPCW) ##devtools::install_github("jsohlendorff/contICEIPCW")
     setkeyv(data, c("id", "time"))
@@ -67,13 +72,15 @@ run_ice_ipcw <- function(data,
             max_time_horizon = time_horizon,
             time_covariates = c("changeHbA1c", "A"),
             baseline_covariates =  c("age", "A_0", "sex", "HbA1c", "U"),
-            marginal_censoring = TRUE
+            marginal_censoring = TRUE,
+            verbose = verbose
         )
         prop_scores <- contICEIPCW::propensity_scores(
             prepared_data = prep_data,
             model_treatment = "learn_glm_logistic",
             penalize_treatment = TRUE,
-            model_hazard = "learn_coxph"
+            model_hazard = "learn_coxph",
+            verbose = verbose
         )
         est <- contICEIPCW::debias_ice_ipcw(
             prepared_data = prop_scores,
@@ -84,13 +91,13 @@ run_ice_ipcw <- function(data,
             penalize_hazard = FALSE,
             conservative = TRUE,
             static_intervention = 1,
-            semi_tmle = TRUE,
-            verbose = TRUE
+            tmle_update = TRUE,
+            verbose = verbose
         )
-        est$intervention <- paste0("stay_on_", regimen)
+        est$stay_on <- regimen
         res[[regimen]] <- est
     }
-    res
+    rbindlist(res)
 }
 
 ######################################################################

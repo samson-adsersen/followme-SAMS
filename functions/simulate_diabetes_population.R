@@ -1,4 +1,4 @@
-simulate_diabetes_population <- function(diabetes_polypharmacy_setting,initial_treatment){
+simulate_diabetes_population <- function(diabetes_polypharmacy_setting,initial_treatment, stay_on = NULL){
     if(FALSE){
         tar_load(diabetes_polypharmacy_setting)
         initial_treatment <- list(GLP1 = 577,SGLT2 = 801,DPP4 = 1304)
@@ -7,9 +7,20 @@ simulate_diabetes_population <- function(diabetes_polypharmacy_setting,initial_t
         a[[names(b)]] <- b[[1]]
         a
     }
-    intervene <- diabetes_polypharmacy_setting$intervene
-    intervene_values <- diabetes_polypharmacy_setting$intervene_values
-    intervene_variables <- diabetes_polypharmacy_setting$intervene_variables
+    ## More complex interventions
+    if (is.null(stay_on)) {
+       intervene <- diabetes_polypharmacy_setting$intervene
+       intervene_values <- diabetes_polypharmacy_setting$intervene_values
+       intervene_variables <- diabetes_polypharmacy_setting$intervene_variables
+    ## Basic stay on treatment intervention
+    } else {
+        intervene <- TRUE
+        intervene_values <- 1
+        intervene_variables <- stay_on
+        diabetes_polypharmacy_setting$intervene <- intervene
+        diabetes_polypharmacy_setting$intervene_values <- intervene_values
+        diabetes_polypharmacy_setting$intervene_variables <- intervene_variables
+    }
     if (!is.null(intervene)) {
         if (intervene) {
             if (sum(intervene_values) != 1) {
