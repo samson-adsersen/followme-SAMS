@@ -3,9 +3,9 @@
 ## Author: Thomas Alexander Gerds
 ## Created: okt 23 2025 (15:22) 
 ## Version: 
-## Last-Updated: mar 18 2026 (12:01) 
+## Last-Updated: mar 18 2026 (12:07) 
 ##           By: Thomas Alexander Gerds
-##     Update #: 73
+##     Update #: 74
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -54,7 +54,7 @@ list(
                                                     scale_MACE = 0.002,
                                                     scale_death = 0.001))
             simulate_diabetes_population(diabetes_polypharmacy_setting = dps,
-                                         initial_treatment = list(GLP1 = 2801,SGLT2 = 1577,DPP4 = 3304))
+                                         initial_treatment = list(GLP1 = 801,SGLT2 = 577,DPP4 = 1304))
         }
     },cue = tar_cue(mode = "thorough")),
     tar_target(name = aalen_johansen_diabetes_population,
