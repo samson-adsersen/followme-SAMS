@@ -3,9 +3,9 @@
 ## Author: Johan Sebastian Ohlendorff
 ## Created: Mar 16 2026 (11:52) 
 ## Version: 
-## Last-Updated: Mar 17 2026 (13:00) 
-##           By: Johan Sebastian Ohlendorff
-##     Update #: 94
+## Last-Updated: mar 18 2026 (12:04) 
+##           By: Thomas Alexander Gerds
+##     Update #: 95
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -69,7 +69,7 @@ run_ice_ipcw <- function(data, time_horizon, regimens = c("GLP1", "SGLT2", "DPP4
             conservative = TRUE,
             static_intervention = 1,
             semi_tmle = TRUE,
-            verbose = TRUE
+            verbose = FALSE
         )
         est$intervention <- paste0("stay_on_", regimen)
         res[[regimen]] <- est
