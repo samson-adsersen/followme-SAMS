@@ -1,4 +1,4 @@
-run_rtmle_diabetes_population <- function(diabetes_population,time_horizon){
+run_rtmle_diabetes_population <- function(diabetes_population,...){
     if (FALSE){
         library(rtmle)
         library(targets)
@@ -54,8 +54,6 @@ run_rtmle_diabetes_population <- function(diabetes_population,time_horizon){
     x <- model_formula(x,exclusion_rules = list("SGLT2_0" = c("GLP1_0","DPP4_0"),
                                                 "GLP1_0" = c("SGLT2_0","DPP4_0"),
                                                 "DPP4_0" = c("SGLT2_0","GLP1_0")))
-    x <- run_rtmle(x,
-                   time_horizon = time_horizon,
-                   learner = "learn_glmnet")
+    x <- run_rtmle(x,...)
     return(x)
 }
