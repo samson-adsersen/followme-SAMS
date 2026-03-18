@@ -3,9 +3,9 @@
 ## Author: Johan Sebastian Ohlendorff
 ## Created: Mar 16 2026 (11:52) 
 ## Version: 
-## Last-Updated: mar 18 2026 (12:07) 
-##           By: Thomas Alexander Gerds
-##     Update #: 98
+## Last-Updated: Mar 18 2026 (13:00) 
+##           By: Johan Sebastian Ohlendorff
+##     Update #: 103
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -15,17 +15,33 @@
 ## 
 ### Code:
 
-run_ice_ipcw <- function(data, time_horizon, regimens = c("GLP1", "SGLT2", "DPP4")){
+run_ice_ipcw <- function(data,
+                         time_horizon,
+                         primary_event = "MACE",
+                         model_pseudo_outcome = "lm",
+                         penalize_pseudo_outcome = FALSE,
+                         regimens = c("GLP1", "SGLT2", "DPP4")){
+    ## Check if contICEIPCW is installed, if not install it from GitHub
+    if (!requireNamespace("contICEIPCW", quietly = TRUE)) {
+        requireNamespace("devtools", quietly = TRUE)
+        devtools::install_github("jsohlendorff/contICEIPCW")
+    }
     ## require(contICEIPCW) ##devtools::install_github("jsohlendorff/contICEIPCW")
-    model_hazard <- "learn_coxph"
     setkeyv(data, c("id", "time"))
     baseline_data <- data[time == 0, c("id", "sex", "age", "HbA1c", "U", regimens), with = FALSE]
     setnames(baseline_data, regimens, paste0(regimens, "_0"))
     timevar_data <- data[time > 0, c("id", "time", "event", "changeHbA1c", regimens), with = FALSE]
     ## Change labels visit, MACE, death, dropout to A, Y, D, C
     timevar_data[event == "visit", event := "A"]
-    timevar_data[event == "MACE", event := "Y"]
-    timevar_data[event == "death", event := "D"]
+    if (primary_event == "MACE") {
+        timevar_data[event == "MACE", event := "Y"]
+        timevar_data[event == "death", event := "D"]
+    } else if (primary_event == "death"){
+        timevar_data[event == "MACE", event := "D"]
+        timevar_data[event == "death", event := "Y"]
+    } else {
+        stop("Unknown primary event")
+    }
     timevar_data[event == "dropout", event := "C"]
     ## Remove events after event==Y;
     ## Only first MACE event matters for the analysis.
@@ -62,14 +78,14 @@ run_ice_ipcw <- function(data, time_horizon, regimens = c("GLP1", "SGLT2", "DPP4
         est <- contICEIPCW::debias_ice_ipcw(
             prepared_data = prop_scores,
             time_horizon = time_horizon,
-            model_pseudo_outcome = "lm",
-            penalize_pseudo_outcome = TRUE,
+            model_pseudo_outcome = model_pseudo_outcome,
+            penalize_pseudo_outcome = penalize_pseudo_outcome,
             model_hazard = NULL,
             penalize_hazard = FALSE,
             conservative = TRUE,
             static_intervention = 1,
             semi_tmle = TRUE,
-            verbose = FALSE
+            verbose = TRUE
         )
         est$intervention <- paste0("stay_on_", regimen)
         res[[regimen]] <- est
