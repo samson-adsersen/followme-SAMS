@@ -38,7 +38,6 @@ make_regression_model <- function(outcome_variables,parameter_values) {
         v_effects <- setNames(v_effects,sub(paste0("_",v,"$"),"",names(v_effects)))
         if (length(v_effects)>0){
             lava::regression(m) <- formula(paste0(v," ~ ",paste0(sapply(names(v_effects),function(e){paste0("f(",e,",",v_effects[[e]],")")}),collapse = "+")))
-            print(m)
         }
     }
     m

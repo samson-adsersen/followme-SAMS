@@ -3,9 +3,9 @@
 ## Author: Thomas Alexander Gerds
 ## Created: okt 23 2025 (15:22) 
 ## Version: 
-## Last-Updated: Mar 17 2026 (12:57) 
-##           By: Johan Sebastian Ohlendorff
-##     Update #: 64
+## Last-Updated: mar 18 2026 (12:01) 
+##           By: Thomas Alexander Gerds
+##     Update #: 73
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -32,7 +32,7 @@ list(
     ## Treatments: GLP1, SGLT2, DPP4
     ## All start on GLP1 at baseline.
     ## Afterwards, the treatment regimen states that patients
-    ## can stay on GLP1, but may not take SGLT2 at any time;
+    ## stay on GLP1, but may not take SGLT2 at any time;
     ## Values of DPP4 are not intervened upon.
     tar_target(name = diabetes_polypharmacy_setting_interventional_data,{
         command = {
@@ -47,17 +47,30 @@ list(
     }),
     tar_target(name = diabetes_population,{ 
         command ={
-            simulate_diabetes_population(diabetes_polypharmacy_setting = diabetes_polypharmacy_setting,
+            dps <- diabetes_polypharmacy_setting
+            dps$parameter_values <- modifyList(dps$parameter_values,
+                                               list(effect_GLP1_MACE = -1,
+                                                    effect_SGLT2_MACE = -2,
+                                                    scale_MACE = 0.002,
+                                                    scale_death = 0.001))
+            simulate_diabetes_population(diabetes_polypharmacy_setting = dps,
                                          initial_treatment = list(GLP1 = 2801,SGLT2 = 1577,DPP4 = 3304))
         }
     },cue = tar_cue(mode = "thorough")),
+    tar_target(name = aalen_johansen_diabetes_population,
+               command = {
+                   run_aalen_johansen_diabetes_population(diabetes_population = diabetes_population,time_horizon = 30)
+               }),
+
     tar_target(name = rtmle_diabetes_population,
                command = {
-                   run_rtmle_diabetes_population(diabetes_population = diabetes_population)
+                   run_rtmle_diabetes_population(diabetes_population = diabetes_population,time_horizon = 5)
                }),
     tar_target(name = ice_ipcw_diabetes_population,
                command = {
-                   run_ice_ipcw(data = diabetes_population, time_horizon = 60, regimens = c("GLP1", "SGLT2", "DPP4"))
+                   run_ice_ipcw(data = diabetes_population,
+                                time_horizon = 30,
+                                regimens = c("GLP1", "SGLT2", "DPP4"))
                })
 )
 
