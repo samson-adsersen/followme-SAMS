@@ -3,9 +3,9 @@
 ## Author: Thomas Alexander Gerds
 ## Created: okt 23 2025 (15:22) 
 ## Version: 
-## Last-Updated: Mar 19 2026 (09:51) 
+## Last-Updated: Mar 19 2026 (10:33) 
 ##           By: Johan Sebastian Ohlendorff
-##     Update #: 134
+##     Update #: 137
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -67,8 +67,8 @@ list(
                    run_ice_ipcw(data = diabetes_population,
                                 time_horizon = 30,
                                 regimens = c("GLP1", "SGLT2", "DPP4"),
-                                model_pseudo_outcome = "lm", ## specify learner for iterative regression; example learner from package: learn_glm_logistic
-                                penalize_pseudo_outcome = TRUE, ## uses cross-validation
+                                model_pseudo_outcome = "oipcw_expit", ## specify learner for iterative regression; example learner from package: learn_glm_logistic
+                                penalize_pseudo_outcome = FALSE, ## uses cross-validation if TRUE
                                 primary_event = "MACE",
                                 verbose = FALSE)
                })

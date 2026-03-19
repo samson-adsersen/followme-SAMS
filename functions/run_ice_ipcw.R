@@ -3,9 +3,9 @@
 ## Author: Johan Sebastian Ohlendorff
 ## Created: Mar 16 2026 (11:52) 
 ## Version: 
-## Last-Updated: Mar 18 2026 (16:54) 
+## Last-Updated: Mar 19 2026 (10:28) 
 ##           By: Johan Sebastian Ohlendorff
-##     Update #: 127
+##     Update #: 132
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -35,7 +35,7 @@ run_ice_ipcw <- function(data,
     setkeyv(data, c("id", "time"))
     baseline_data <- data[time == 0, c("id", "sex", "age", "HbA1c", "U", regimens), with = FALSE]
     setnames(baseline_data, regimens, paste0(regimens, "_0"))
-    timevar_data <- data[time > 0, c("id", "time", "event", "changeHbA1c", regimens), with = FALSE]
+    timevar_data <- data[time > 0, c("id", "time", "event", "changeHbA1c", regimens, paste0("History_", regimens)), with = FALSE]
     ## Change labels visit, MACE, death, dropout to A, Y, D, C
     timevar_data[event == "visit", event := "A"]
     if (primary_event == "MACE") {
@@ -62,15 +62,15 @@ run_ice_ipcw <- function(data,
     for (regimen in regimens){
         other_regimens <- setdiff(regimens, regimen)
         other_regimens_baseline <- paste0(other_regimens, "_0")
-        data_regimen <- copy(timevar_data)[, !(other_regimens), with = FALSE]
-        baseline_regimen <- copy(baseline_data)[, !(other_regimens_baseline), with = FALSE]
+        data_regimen <- copy(timevar_data)
+        baseline_regimen <- copy(baseline_data)
         setnames(data_regimen, regimen, "A")
         setnames(baseline_regimen, paste0(regimen, "_0"), "A_0")
         prep_data <- contICEIPCW::prepare_data(
             data = list(baseline_data = baseline_regimen,
                         timevarying_data = data_regimen),
             max_time_horizon = time_horizon,
-            time_covariates = c("changeHbA1c", "A"),
+            time_covariates = c("changeHbA1c", "A", c(paste0("History_", regimens), other_regimens)),
             baseline_covariates =  c("age", "A_0", "sex", "HbA1c", "U"),
             marginal_censoring = TRUE,
             verbose = verbose
@@ -80,7 +80,8 @@ run_ice_ipcw <- function(data,
             model_treatment = "learn_glm_logistic",
             penalize_treatment = TRUE,
             model_hazard = "learn_coxph",
-            verbose = verbose
+            verbose = verbose,
+            exclude_latest_covariate = c(paste0("History_", regimens), other_regimens) ## Time-ordering of these variable and the treatment is unclear, so remove the latest values 
         )
         est <- contICEIPCW::debias_ice_ipcw(
             prepared_data = prop_scores,
