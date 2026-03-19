@@ -1,4 +1,4 @@
-run_rtmle_diabetes_population <- function(diabetes_population,...){
+run_rtmle_diabetes_population <- function(diabetes_population, intervals = seq(0, 60, 6), time_horizons = 30,...){
     if (FALSE){
         library(rtmle)
         library(targets)
@@ -6,7 +6,13 @@ run_rtmle_diabetes_population <- function(diabetes_population,...){
         tar_load(diabetes_population)
     }
     setkey(diabetes_population,id,time,event)
-    intervals <- seq(0,60,6)
+    time_horizons <- match(time_horizons, intervals) - 1
+    if (any(is.na(time_horizons))){
+        stop("time_horizons must be a subset of intervals")
+    }
+    if (any(time_horizons == 0)){
+        stop("time_horizons must not include 0")
+    }
     x <- rtmle::rtmle_init(intervals = length(intervals)-1,
                            name_id = "id",
                            name_outcome = "MACE",
@@ -54,6 +60,6 @@ run_rtmle_diabetes_population <- function(diabetes_population,...){
     x <- rtmle::model_formula(x,exclusion_rules = list("SGLT2_0" = c("GLP1_0","DPP4_0"),
                                                        "GLP1_0" = c("SGLT2_0","DPP4_0"),
                                                        "DPP4_0" = c("SGLT2_0","GLP1_0")))
-    x <- run_rtmle(x,...)
+    x <- run_rtmle(x, time_horizon = time_horizons, ...)
     return(x)
 }

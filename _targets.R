@@ -3,9 +3,9 @@
 ## Author: Thomas Alexander Gerds
 ## Created: okt 23 2025 (15:22) 
 ## Version: 
-## Last-Updated: Mar 18 2026 (16:46) 
+## Last-Updated: Mar 19 2026 (09:51) 
 ##           By: Johan Sebastian Ohlendorff
-##     Update #: 130
+##     Update #: 134
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -58,7 +58,9 @@ list(
 
     tar_target(name = rtmle_diabetes_population,
                command = {
-                   run_rtmle_diabetes_population(diabetes_population = diabetes_population,time_horizon = 5)
+                   run_rtmle_diabetes_population(diabetes_population = diabetes_population,
+                                                 time_horizons = 30,
+                                                 intervals = seq(0,60,6))
                }),
     tar_target(name = ice_ipcw_diabetes_population,
                command = {
