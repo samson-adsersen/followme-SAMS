@@ -1,6 +1,11 @@
 library(targets)
-library(plotly)
-tar_load_globals()
+tar_source("functions")
+
+## Load the in the vector:
+invisible(lapply(c("lava","survival","data.table","prodlim","rtmle","foreach","ggplot2","plotly"),
+                 library, character.only = TRUE))
+
+## tar_load_globals()
 tar_load_everything()
 dps <- diabetes_polypharmacy_setting
 dps$parameter_values <- modifyList(dps$parameter_values,list(effect_GLP1_MACE = 0,scale_MACE = 0.002,scale_death = 0.001))
@@ -45,6 +50,7 @@ x$models$time_1$outcome$MACE_2$fit$Always_GLP1
 x$models$time_0$Always_GLP1
 
 plot_model_coefficients(x,plot_style = "manhattan",time_horizon = 3,protocol = "Always_GLP1",manhattan_color_by = "node",show_x_labels = FALSE)
+
 plot_model_coefficients(x1,plot_style = "manhattan",time_horizon = 3,protocol = "Always_GLP1",manhattan_color_by = "node",show_x_labels = FALSE)
 plot(x)
 plot(x1)

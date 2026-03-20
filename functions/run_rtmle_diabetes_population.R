@@ -38,7 +38,7 @@ run_rtmle_diabetes_population <- function(diabetes_population, intervals = seq(0
             setnames(d,c("id","date","value"))
         }
         d[]
-    })
+    })    
     names(tv) <- tv_covs
     x <- rtmle::add_long_data(x,
                               outcome_data=diabetes_population[event == "MACE",.(id,date = time)][!duplicated(id)],

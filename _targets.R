@@ -71,7 +71,11 @@ list(
                                 penalize_pseudo_outcome = FALSE, ## uses cross-validation if TRUE
                                 primary_event = "MACE",
                                 verbose = FALSE)
-               })
+               }),
+    
+    tar_target(diabetes_data, {
+        make_and_write_diabetes_data(file_name = "data/diabetes_population.csv", diabetes_polypharmacy_setting = diabetes_polypharmacy_setting)
+    }, format = "file")
 )
 
 
