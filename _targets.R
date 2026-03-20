@@ -73,8 +73,8 @@ list(
                                 verbose = FALSE)
                }),
     
-    tar_target(diabetes_data, {
-        make_and_write_diabetes_data(file_name = "data/diabetes_population.csv", diabetes_polypharmacy_setting = diabetes_polypharmacy_setting)
+    tar_target(diabetes_sim_data, {
+        make_and_write_diabetes_data(file_name = "data/diabetes_sim_data.csv", diabetes_polypharmacy_setting = diabetes_polypharmacy_setting)
     }, format = "file")
 )
 
