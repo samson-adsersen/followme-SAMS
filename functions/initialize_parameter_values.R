@@ -1,4 +1,5 @@
 initialize_parameter_values <- function(baseline_variables,
+                                        baseline_visit = NULL,
                                         visit_schedule,
                                         visit_events,
                                         visit_measurements,
@@ -9,6 +10,7 @@ initialize_parameter_values <- function(baseline_variables,
                                         effect_value = 0){
     events <- c(absorbing_events,intermediate_events)
     intercepts <- sapply(c(baseline_variables,
+                           baseline_visit,
                            visit_measurements,
                            visit_events),function(v){intercept_value})
     names(intercepts) <- paste0("intercept_",names(intercepts))
@@ -21,6 +23,9 @@ initialize_parameter_values <- function(baseline_variables,
         setNames(rep(effect_value, nrow(combinations)), paste0("effect_",apply(combinations, 1, paste, collapse = "_")))
     }
     effects_baseline_baseline <- construct_effects(baseline_variables,baseline_variables,effect_value = effect_value)
+    if (length(baseline_visit)){
+        effects_baseline_baseline_visit <- construct_effects(baseline_variables,baseline_visit,effect_value = effect_value)
+    }
 
     effects_baseline_events <- construct_effects(baseline_variables,
                                                  events,
@@ -42,6 +47,7 @@ initialize_parameter_values <- function(baseline_variables,
     as.list(c(intercepts,
               scales,
               effects_baseline_baseline,
+              effects_baseline_baseline_visit,
               effects_baseline_visit,
               effects_baseline_events,
               effects_timevar))

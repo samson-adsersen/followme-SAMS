@@ -1,0 +1,58 @@
+### calculate_interventional_risks.R --- 
+#----------------------------------------------------------------------
+## Author: Johan Sebastian Ohlendorff
+## Created: Mar 18 2026 (16:33) 
+## Version: 
+## Last-Updated: mar 20 2026 (14:53) 
+##           By: Thomas Alexander Gerds
+##     Update #: 16
+#----------------------------------------------------------------------
+## 
+### Commentary: 
+## 
+### Change Log:
+#----------------------------------------------------------------------
+## 
+### Code:
+calculate_interventional_risks <- function(n,
+                                           diabetes_polypharmacy_setting,
+                                           intervention,
+                                           time_horizons,
+                                           primary_event) {
+    
+    out <- list()
+    for (treatment in names(intervention)) {
+        set_intervention <- function(X){
+            x <- data.table("dummy" = rep(intervention[[1]],NROW(X)))
+            setnames(x,"dummy",treatment)
+            x
+        }
+        diabetes_polypharmacy_setting$post_baseline_visit_hook <- set_intervention
+        treatment_dt <- do.call("simulate_cohort",
+                                c(list(n = n),
+                                  diabetes_polypharmacy_setting))
+        treatment_dt[,intervention := treatment]
+        out[[treatment]] <- treatment_dt
+    }
+    d <- rbindlist(out,use.names = TRUE)
+    setkeyv(d, c("intervention", "id", "time"))
+    terminal_events <- c("death", "MACE", "dropout")
+    data_terminal_events <- d[event %chin% terminal_events, list(time = time[1], event = event[1]), keyby = c("id", "intervention")]
+    out <- list()
+    for (time_horizon in time_horizons) {
+        if (primary_event == "MACE") {
+            true_values <- data_terminal_events[, .(risk = mean(time <= time_horizon & event == "MACE")), by = "intervention"]
+        } else if (primary_event == "death") {
+            true_values <- data_terminal_events[, .(risk = mean(time <= time_horizon & event == "death")), by = "intervention"]
+        } else {
+            stop("Unknown primary event")
+        }
+        true_values[, time_horizon := time_horizon]
+        out[[as.character(time_horizon)]] <- true_values
+    }
+    
+    return(rbindlist(out))
+}
+
+######################################################################
+### calculate_interventional_risks.R ends here

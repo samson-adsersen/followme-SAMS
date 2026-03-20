@@ -1,8 +1,6 @@
 run_rtmle_diabetes_population <- function(diabetes_population, intervals = seq(0, 60, 6), time_horizons = 30,...){
     if (FALSE){
-        library(rtmle)
-        library(targets)
-        library(data.table)
+        tar_load_globals()
         tar_load(diabetes_population)
     }
     setkey(diabetes_population,id,time,event)
@@ -22,7 +20,7 @@ run_rtmle_diabetes_population <- function(diabetes_population, intervals = seq(0
     diabetes_population[, last := as.integer(.I == .I[.N]), by = id]
     diabetes_population[, first := as.integer(.I == .I[1L]), by = id]
     ## diabetes_population[last == 1,table(event)]
-    tv_covs <- c("HbA1c","changeHbA1c","GLP1","SGLT2","DPP4","History_GLP1","History_SGLT2","History_DPP4")
+    tv_covs <- c("HbA1c","changeHbA1c","GLP1","SGLT2","DPP4")
     tv <- lapply(tv_covs, function(tv){
         if (tv %in% c("GLP1","SGLT2","DPP4")){
             d <- diabetes_population[,c("id","time",tv),with = FALSE]
