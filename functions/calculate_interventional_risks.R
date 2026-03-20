@@ -3,9 +3,9 @@
 ## Author: Johan Sebastian Ohlendorff
 ## Created: Mar 18 2026 (16:33) 
 ## Version: 
-## Last-Updated: mar 20 2026 (14:53) 
-##           By: Thomas Alexander Gerds
-##     Update #: 16
+## Last-Updated: Mar 20 2026 (16:13) 
+##           By: Johan Sebastian Ohlendorff
+##     Update #: 19
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -19,7 +19,6 @@ calculate_interventional_risks <- function(n,
                                            intervention,
                                            time_horizons,
                                            primary_event) {
-    
     out <- list()
     for (treatment in names(intervention)) {
         set_intervention <- function(X){
@@ -28,8 +27,11 @@ calculate_interventional_risks <- function(n,
             x
         }
         diabetes_polypharmacy_setting$post_baseline_visit_hook <- set_intervention
+        intervention_arg <- list()
+        intervention_arg[[treatment]] <- intervention[[treatment]]
         treatment_dt <- do.call("simulate_cohort",
                                 c(list(n = n),
+                                  list(intervention = intervention_arg),
                                   diabetes_polypharmacy_setting))
         treatment_dt[,intervention := treatment]
         out[[treatment]] <- treatment_dt

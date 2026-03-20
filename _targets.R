@@ -3,9 +3,9 @@
 ## Author: Thomas Alexander Gerds
 ## Created: okt 23 2025 (15:22) 
 ## Version: 
-## Last-Updated: mar 20 2026 (15:22) 
-##           By: Thomas Alexander Gerds
-##     Update #: 144
+## Last-Updated: Mar 20 2026 (17:07) 
+##           By: Johan Sebastian Ohlendorff
+##     Update #: 155
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -36,7 +36,7 @@ list(
     tar_target(name = diabetes_population,{ 
         command = {
             cohort <- do.call("simulate_cohort",
-                              c(list(n = 3000),
+                              c(list(n = 30000),
                                 diabetes_polypharmacy_setting))
         }
     },cue = tar_cue(mode = "thorough")),
@@ -52,12 +52,11 @@ list(
                command = {
                    run_aalen_johansen_diabetes_population(diabetes_population = diabetes_population,time_horizon = 30)
                }),
-
     tar_target(name = rtmle_diabetes_population,
                command = {
                    run_rtmle_diabetes_population(diabetes_population = diabetes_population,
                                                  time_horizons = 30,
-                                                 intervals = seq(0,60,6),
+                                                 intervals = seq(0,60,3),
                                                  learner = "learn_glmnet")
                }),
     tar_target(name = ice_ipcw_diabetes_population,
@@ -68,9 +67,10 @@ list(
                                 model_pseudo_outcome = "oipcw_expit", ## specify learner for iterative regression; example learner from package: learn_glm_logistic
                                 penalize_pseudo_outcome = FALSE, ## uses cross-validation if TRUE
                                 primary_event = "MACE",
+                                contrasts = TRUE,
+                                contrasts_reference = "SGLT2",
                                 verbose = FALSE)
                }),
-    
     tar_target(diabetes_sim_data, {
         make_and_write_diabetes_data(file_name = "data/diabetes_sim_data.csv", diabetes_polypharmacy_setting = diabetes_polypharmacy_setting)
     }, format = "file")
