@@ -1,10 +1,6 @@
 library(targets)
 tar_source("functions")
 
-## Load the in the vector:
-invisible(lapply(c("lava","survival","data.table","prodlim","rtmle","foreach","ggplot2","plotly"),
-                 library, character.only = TRUE))
-
 ## tar_load_globals()
 tar_load_everything()
 dps <- diabetes_polypharmacy_setting
