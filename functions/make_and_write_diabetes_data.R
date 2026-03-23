@@ -9,7 +9,7 @@ make_and_write_diabetes_data <- function(file_name, diabetes_polypharmacy_settin
     ## Setup to look more realistic
     d[, U := NULL]
     d[, HbA1c := HbA1c + cumsum(changeHbA1c), id]
-    d = d[, .(id, age, event, time, HbA1c, GLP1, SGLT2, DPP4, MACE)]
+    d = d[, .(id, sex, age, event, time, HbA1c, GLP1, SGLT2, DPP4, MACE)]
 
     fwrite(d, file = file_name)
     file_name
