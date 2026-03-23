@@ -1,9 +1,21 @@
 library(targets)
-tar_source("functions")
+tar_load_globals()
+
 
 ## tar_load_globals()
 tar_load_everything()
 dps <- diabetes_polypharmacy_setting
+
+
+M <- lvm()
+lava::distribution(M, "start_GLP1") <- binomial.lvm("logit")
+lava::intercept(M, "start_GLP1") <- 0.25
+u <- sim(M,10000)
+mean(u[[1]])
+
+m <- make_regression_model(dps$baseline_visit,
+                           parameter_values = dps$parameter_values)
+
 dps$parameter_values <- modifyList(dps$parameter_values,list(effect_GLP1_MACE = 0,scale_MACE = 0.002,scale_death = 0.001))
 d <- simulate_diabetes_population(diabetes_polypharmacy_setting = dps,initial_treatment = list(GLP1 = 801,SGLT2 = 1077,DPP4 = 1304))
 setkey(d,id,time,event)

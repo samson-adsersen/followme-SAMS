@@ -68,7 +68,6 @@ simulate_cohort <- function(n,
     for (v in c(names(intermediate_events),names(visit_measurements))){
         data.table::set(X_baseline,j = v,value = 0)
     }
-
     ## baseline visit (e.g., randomization)
     if (length(baseline_visit)>0){
         baseline_visit_model <- make_regression_model(baseline_visit,parameter_values)
@@ -79,7 +78,6 @@ simulate_cohort <- function(n,
     if (length(X_baseline_visit) && is.function(post_baseline_visit_hook)){
         X_baseline_visit <- do.call(post_baseline_visit_hook,list(X = X_baseline_visit))
     }
-
     #
     # regression models used to simulate intermediate and absorbing events
     # 

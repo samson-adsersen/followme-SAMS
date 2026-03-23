@@ -3,9 +3,15 @@
 ## Author: Johan Sebastian Ohlendorff
 ## Created: Mar 16 2026 (11:52) 
 ## Version: 
-## Last-Updated: Mar 20 2026 (16:54) 
-##           By: Johan Sebastian Ohlendorff
-##     Update #: 176
+<<<<<<< HEAD
+## Last-Updated: mar 23 2026 (13:11) 
+##           By: Thomas Alexander Gerds
+##     Update #: 177
+=======
+## Last-Updated: mar 23 2026 (12:10) 
+##           By: Thomas Alexander Gerds
+##     Update #: 133
+>>>>>>> b314d95 (updated data generation)
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -35,7 +41,7 @@ run_ice_ipcw <- function(data,
     setkeyv(data, c("id", "time"))
     baseline_data <- data[time == 0, c("id", "sex", "age", "HbA1c", "U", regimens), with = FALSE]
     setnames(baseline_data, regimens, paste0(regimens, "_0"))
-    timevar_data <- data[time > 0, c("id", "time", "event", "changeHbA1c", regimens), with = FALSE] #paste0("History_", regimens)
+    timevar_data <- data[time > 0, c("id", "time", "event", "changeHbA1c", regimens), with = FALSE]
     ## Change labels visit, MACE, death, dropout to A, Y, D, C
     timevar_data[event == "visit", event := "A"]
     if (primary_event == "MACE") {
@@ -67,35 +73,35 @@ run_ice_ipcw <- function(data,
         setnames(data_regimen, regimen, "A")
         setnames(baseline_regimen, paste0(regimen, "_0"), "A_0")
         prep_data <- contICEIPCW::prepare_data(
-            data = list(baseline_data = baseline_regimen,
-                        timevarying_data = data_regimen),
-            max_time_horizon = time_horizon,
-            time_covariates = c("changeHbA1c", "A", other_regimens), # c(paste0("History_", regimens)
-            baseline_covariates =  c("age", "A_0", "sex", "HbA1c", "U"),
-            marginal_censoring = TRUE,
-            verbose = verbose
-        )
+                                      data = list(baseline_data = baseline_regimen,
+                                                  timevarying_data = data_regimen),
+                                      max_time_horizon = time_horizon,
+                                      time_covariates = c("changeHbA1c", "A", other_regimens),
+                                      baseline_covariates =  c("age", "A_0", "sex", "HbA1c", "U"),
+                                      marginal_censoring = TRUE,
+                                      verbose = verbose
+                                  )
         prop_scores <- contICEIPCW::propensity_scores(
-            prepared_data = prep_data,
-            model_treatment = "learn_glm_logistic",
-            penalize_treatment = TRUE,
-            model_hazard = "learn_coxph",
-            verbose = verbose,
-            exclude_latest_covariate = other_regimens ## Time-ordering of these variable and the treatment is unclear, so remove the latest values c(paste0("History_", regimens)
-        )
+                                        prepared_data = prep_data,
+                                        model_treatment = "learn_glm_logistic",
+                                        penalize_treatment = TRUE,
+                                        model_hazard = "learn_coxph",
+                                        verbose = verbose,
+                                        exclude_latest_covariate = other_regimens ## Time-ordering of these variable and the treatment is unclear, so remove the latest values 
+                                    )
         est <- contICEIPCW::debias_ice_ipcw(
-            prepared_data = prop_scores,
-            time_horizon = time_horizon,
-            static_intervention = 1,
-            tmle_update = TRUE,
-            return_ic = TRUE, # For effects
-            verbose = verbose,
-            conservative = TRUE,
-            ...
-        )
-        result_dt <- as.data.table(est$result)
-        result_dt[, c("time_horizon", "treatment", "treatment_reference", "ice_ipcw_estimate", "target_parameter", "p_value") := list(time_horizon, regimen, NA, NULL, "risk", NA)]
-        est$result <- result_dt
+                                prepared_data = prop_scores,
+                                time_horizon = time_horizon,
+                                model_pseudo_outcome = model_pseudo_outcome,
+                                penalize_pseudo_outcome = penalize_pseudo_outcome,
+                                model_hazard = NULL,
+                                penalize_hazard = FALSE,
+                                conservative = TRUE,
+                                static_intervention = 1,
+                                tmle_update = TRUE,
+                                verbose = verbose
+                            )
+        est$stay_on <- regimen
         res[[regimen]] <- est
     }
     results <- rbindlist(lapply(res, function(x) x$result))

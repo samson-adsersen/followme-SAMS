@@ -28,7 +28,7 @@ get_diabetes_polypharmacy_setting <- function(){
     ipv <- list(intercept_U = 0, intercept_sex = 0, intercept_age = 70, intercept_HbA1c = 50,
                 var_age = 6,
                 var_HbA1c = 3,
-                intercept_start_GLP1 = 0.333, intercept_start_SGLT2 = 0.5, intercept_changeHbA1c = 0, 
+                intercept_start_GLP1 = logit(0.33), intercept_start_SGLT2 = logit(0.5), intercept_changeHbA1c = 0, 
                 intercept_GLP1 = 0, intercept_SGLT2 = 0, intercept_DPP4 = 0, 
                 scale_death = 0.0001, scale_dropout = 0.0001, scale_MACE = 0.005, 
                 effect_sex_U = 0, effect_age_U = 0, effect_HbA1c_U = 0, effect_U_sex = 0, 
