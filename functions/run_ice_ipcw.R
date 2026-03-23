@@ -3,15 +3,9 @@
 ## Author: Johan Sebastian Ohlendorff
 ## Created: Mar 16 2026 (11:52) 
 ## Version: 
-<<<<<<< HEAD
 ## Last-Updated: mar 23 2026 (13:11) 
 ##           By: Thomas Alexander Gerds
 ##     Update #: 177
-=======
-## Last-Updated: mar 23 2026 (12:10) 
-##           By: Thomas Alexander Gerds
-##     Update #: 133
->>>>>>> b314d95 (updated data generation)
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
