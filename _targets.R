@@ -3,9 +3,9 @@
 ## Author: Thomas Alexander Gerds
 ## Created: okt 23 2025 (15:22) 
 ## Version: 
-## Last-Updated: mar 23 2026 (13:10) 
-##           By: Thomas Alexander Gerds
-##     Update #: 147
+## Last-Updated: Mar 25 2026 (20:35) 
+##           By: Johan Sebastian Ohlendorff
+##     Update #: 151
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -62,7 +62,7 @@ list(
     tar_target(name = ice_ipcw_diabetes_population,
                command = {
                    run_ice_ipcw(data = diabetes_population,
-                                time_horizon = 12,
+                                time_horizons = seq(6,60,6),
                                 regimens = c("GLP1", "SGLT2", "DPP4"),
                                 model_pseudo_outcome = "oipcw_expit", ## specify learner for iterative regression; example learner from package: learn_glm_logistic
                                 penalize_pseudo_outcome = FALSE, ## uses cross-validation if TRUE

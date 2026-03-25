@@ -3,9 +3,9 @@
 ## Author: Johan Sebastian Ohlendorff
 ## Created: Mar 16 2026 (11:52) 
 ## Version: 
-## Last-Updated: mar 23 2026 (13:11) 
-##           By: Thomas Alexander Gerds
-##     Update #: 177
+## Last-Updated: Mar 25 2026 (20:28) 
+##           By: Johan Sebastian Ohlendorff
+##     Update #: 191
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -16,11 +16,12 @@
 ### Code:
 
 run_ice_ipcw <- function(data,
-                         time_horizon,
+                         time_horizons,
                          primary_event = "MACE",
                          regimens = c("GLP1", "SGLT2", "DPP4"),
                          contrasts = TRUE,
                          contrasts_reference = "SGLT2",
+                         penalize_treatment = TRUE,
                          verbose = FALSE, ...){  ## arguments to be passed to debias_ice_ipcw
     ## Check if contICEIPCW is installed, if not install it from GitHub
     if (!requireNamespace("contICEIPCW", quietly = TRUE)) {
@@ -69,7 +70,7 @@ run_ice_ipcw <- function(data,
         prep_data <- contICEIPCW::prepare_data(
                                       data = list(baseline_data = baseline_regimen,
                                                   timevarying_data = data_regimen),
-                                      max_time_horizon = time_horizon,
+                                      time_horizons = time_horizons,
                                       time_covariates = c("changeHbA1c", "A", other_regimens),
                                       baseline_covariates =  c("age", "A_0", "sex", "HbA1c", "U"),
                                       marginal_censoring = TRUE,
@@ -78,53 +79,36 @@ run_ice_ipcw <- function(data,
         prop_scores <- contICEIPCW::propensity_scores(
                                         prepared_data = prep_data,
                                         model_treatment = "learn_glm_logistic",
-                                        penalize_treatment = TRUE,
+                                        penalize_treatment = penalize_treatment,
                                         model_hazard = "learn_coxph",
                                         verbose = verbose,
                                         exclude_latest_covariate = other_regimens ## Time-ordering of these variable and the treatment is unclear, so remove the latest values 
                                     )
         est <- contICEIPCW::debias_ice_ipcw(
                                 prepared_data = prop_scores,
-                                time_horizon = time_horizon,
-                                model_pseudo_outcome = model_pseudo_outcome,
                                 penalize_pseudo_outcome = penalize_pseudo_outcome,
                                 model_hazard = NULL,
                                 penalize_hazard = FALSE,
                                 conservative = TRUE,
                                 static_intervention = 1,
                                 tmle_update = TRUE,
+                                return_ic = TRUE,
                                 verbose = verbose
                             )
-        est$stay_on <- regimen
+        est$result$treatment_name <- regimen
+        est$treatment_name <- regimen 
         res[[regimen]] <- est
     }
     results <- rbindlist(lapply(res, function(x) x$result))
-    
-    if (contrasts){
-        res_contrasts <- list()
-        for (regimen in regimens){
-            if (regimen == contrasts_reference) next
-            estimate <- res[[regimen]]$result$estimate - res[[contrasts_reference]]$result$estimate
-            se <- sd(res[[regimen]]$ic - res[[contrasts_reference]]$ic) / sqrt(length(res[[regimen]]$ic))
-            res_contrasts[[regimen]] <- data.frame(
-                estimate = estimate,
-                se = se,
-                lower = estimate - 1.96 * se,
-                upper = estimate + 1.96 * se,
-                ipw = res[[regimen]]$result$ipw - res[[contrasts_reference]]$result$ipw,
-                time_horizon = time_horizon,
-                treatment = regimen,
-                treatment_reference = contrasts_reference,
-                target_parameter = "risk_difference",
-                p_value = 2 * (1 - pnorm(abs(estimate / se)))
-            )
-        }
-        res_contrasts <- rbindlist(res_contrasts)
+    if (contrasts) {
+            res_contrasts <- contICEIPCW::compare_to_reference(
+                     reference_group = contrasts_reference,
+                     res$SGLT2, res$GLP1, res$DPP4
+                 )
     } else {
         res_contrasts <- NULL
     }
-    results <- rbind(results, res_contrasts)
-    return(results)
+    return(list(results = results, contrasts = res_contrasts))
 }
 
 ######################################################################
