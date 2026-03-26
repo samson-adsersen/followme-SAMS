@@ -3,9 +3,9 @@
 ## Author: Thomas Alexander Gerds
 ## Created: okt 23 2025 (15:22) 
 ## Version: 
-## Last-Updated: Mar 25 2026 (20:35) 
+## Last-Updated: Mar 26 2026 (11:36) 
 ##           By: Johan Sebastian Ohlendorff
-##     Update #: 151
+##     Update #: 154
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -71,6 +71,15 @@ list(
                                 contrasts_reference = "SGLT2",
                                 verbose = FALSE)
                }),
+    tar_target(
+        plot_estimate_diabetes_population,
+        plot_estimate(
+            estimates_rtmle = rtmle_diabetes_population,
+            estimates_ice_ipcw = ice_ipcw_diabetes_population,
+            intervals = seq(0,60,6),
+            true_values = interventional_risks_diabetes_population
+        )
+    ),
     tar_target(diabetes_sim_data, {
         make_and_write_diabetes_data(file_name = "data/diabetes_sim_data.csv", diabetes_polypharmacy_setting = diabetes_polypharmacy_setting)
     }, format = "file")
