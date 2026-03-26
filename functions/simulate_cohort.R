@@ -15,7 +15,7 @@ simulate_cohort <- function(n,
                             absorbing_events_hook = NULL, 
                             parameter_values, 
                             intervention = NULL, 
-                            regime = NULL){ 
+                            regime = NULL){
     if (!is.null(seed)) set.seed(seed) 
     ##
     ## Helper function which initially removes all the variables from X
@@ -28,9 +28,8 @@ simulate_cohort <- function(n,
         })
         if (length(x$M)>0){
             if (sum(x$M)>0 && NROW(X)>0){
-                data.table::setDF(X)
                 if (any(variables%in%names(X))){ ## Why if-statement needed?
-                    X = X[,setdiff(names(X),variables),drop = FALSE]
+                    X = X[, setdiff(names(X),variables),drop = FALSE, with = FALSE]
                 }
                 d <- data.table::setDT(lava::sim(x = x,X = X,...))
             }else{
