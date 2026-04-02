@@ -3,9 +3,9 @@
 ## Author: Johan Sebastian Ohlendorff
 ## Created: Mar 16 2026 (11:52) 
 ## Version: 
-## Last-Updated: Mar 25 2026 (20:28) 
-##           By: Johan Sebastian Ohlendorff
-##     Update #: 191
+## Last-Updated: apr  2 2026 (07:00) 
+##           By: Thomas Alexander Gerds
+##     Update #: 193
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -36,7 +36,7 @@ run_ice_ipcw <- function(data,
     setkeyv(data, c("id", "time"))
     baseline_data <- data[time == 0, c("id", "sex", "age", "HbA1c", "U", regimens), with = FALSE]
     setnames(baseline_data, regimens, paste0(regimens, "_0"))
-    timevar_data <- data[time > 0, c("id", "time", "event", "changeHbA1c", regimens), with = FALSE]
+    timevar_data <- data[time > 0, c("id", "time", "event", "changeHbA1c", regimens), with = FALSE] #paste0("History_", regimens)
     ## Change labels visit, MACE, death, dropout to A, Y, D, C
     timevar_data[event == "visit", event := "A"]
     if (primary_event == "MACE") {
@@ -101,10 +101,10 @@ run_ice_ipcw <- function(data,
     }
     results <- rbindlist(lapply(res, function(x) x$result))
     if (contrasts) {
-            res_contrasts <- contICEIPCW::compare_to_reference(
-                     reference_group = contrasts_reference,
-                     res$SGLT2, res$GLP1, res$DPP4
-                 )
+        res_contrasts <- contICEIPCW::compare_to_reference(
+                                          reference_group = contrasts_reference,
+                                          res$SGLT2, res$GLP1, res$DPP4
+                                      )
     } else {
         res_contrasts <- NULL
     }
