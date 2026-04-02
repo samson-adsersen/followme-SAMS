@@ -3,9 +3,9 @@
 ## Author: Thomas Alexander Gerds
 ## Created: okt 23 2025 (15:22) 
 ## Version: 
-## Last-Updated: Mar 26 2026 (11:36) 
-##           By: Johan Sebastian Ohlendorff
-##     Update #: 154
+## Last-Updated: apr  2 2026 (06:57) 
+##           By: Thomas Alexander Gerds
+##     Update #: 155
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -26,7 +26,7 @@ list(
         command ={
             dps <- get_diabetes_polypharmacy_setting()
             dps$parameter_values <- modifyList(dps$parameter_values,
-                                               list(effect_GLP1_MACE = -1,
+                                               list(effect_GLP1_MACE = 1,
                                                     effect_SGLT2_MACE = -2,
                                                     scale_MACE = 0.002,
                                                     scale_death = 0.001))
@@ -55,8 +55,8 @@ list(
     tar_target(name = rtmle_diabetes_population,
                command = {
                    run_rtmle_diabetes_population(diabetes_population = diabetes_population,
-                                                 time_horizons = seq(6,60,6),
-                                                 intervals = seq(0,60,6),
+                                                 time_horizons = 12,
+                                                 time_grid = seq(0,12,1),
                                                  learner = "learn_glmnet")
                }),
     tar_target(name = ice_ipcw_diabetes_population,

@@ -2,19 +2,20 @@ library(targets)
 tar_load_globals()
 
 
+
+
 ## tar_load_globals()
 tar_load_everything()
 dps <- diabetes_polypharmacy_setting
+dps$visit_schedule$mean <- 30
+dps$visit_schedule$sd <- 0
+modifyList(dps$parameter_values,
+           list(effect_GLP1_MACE = 1,
+                effect_SGLT2_MACE = -2,
+                scale_MACE = 0.002,
+                scale_death = 0.001))
 
 
-M <- lvm()
-lava::distribution(M, "start_GLP1") <- binomial.lvm("logit")
-lava::intercept(M, "start_GLP1") <- 0.25
-u <- sim(M,10000)
-mean(u[[1]])
-
-m <- make_regression_model(dps$baseline_visit,
-                           parameter_values = dps$parameter_values)
 
 dps$parameter_values <- modifyList(dps$parameter_values,list(effect_GLP1_MACE = 0,scale_MACE = 0.002,scale_death = 0.001))
 d <- simulate_diabetes_population(diabetes_polypharmacy_setting = dps,initial_treatment = list(GLP1 = 801,SGLT2 = 1077,DPP4 = 1304))
@@ -39,11 +40,25 @@ plot(fit,cause = "MACE",xlim = c(0,50),confint = 0L)
 
 summary(prodlim(Hist(time,event,cens.code = "censored")~treatment,data = bsl),cause = "MACE",times = 50)
 
-x1 <- run_rtmle_diabetes_population(diabetes_population = d,
-                                    time_horizon = 10,
+
+library(profvis)
+profvis(
+x1 <- run_rtmle_diabetes_population(diabetes_population = diabetes_population,
+                                    intervals = seq(0, 12, 1),
+                                    time_horizon = 12,
+                                    progressbar = 0,
                                     learner = list(name = "LASSO regression",
                                                    fun = "learn_glmnet",
                                                    args = list(alpha = 1,nfolds = 10,selector = "undersmooth")))
+)
+
+a <- interventional_risks_diabetes_population[time_horizon == 12,.(treatment = intervention,TRUTH = round(100*risk,2))]
+b <- ice_ipcw_diabetes_population[target_parameter == "risk",.(treatment,ICE_IPCW = round(100*estimate,2))]
+c <- summary(x1)[Target_parameter == "Risk",.(Time_horizon,treatment = gsub("Always_","",Protocol),RTMLE = round(100*Estimate,2))]
+c[a[b,on = "treatment"],on = "treatment"]
+
+
+system.time(x2 <- run_rtmle(x1,refit = FALSE,time_horizon = 12,learner = x1$learner,progressbar = 2))
 
 x <- run_rtmle_diabetes_population(diabetes_population = d,time_horizon = 1:10)
 

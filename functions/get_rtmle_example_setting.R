@@ -25,8 +25,8 @@ get_rtmle_example_setting <- function(){
     }
     ipv <- list(intercept_U = 0, intercept_sex = 0.4, intercept_age = 60, intercept_BMI = 28, 
                 intercept_SBP = 150, intercept_change_SBP = 0, intercept_randomized_treatment = 0.5, intercept_A = 0,
-                intercept_B = 0, scale_death = 0.001, scale_dropout = 0.001, 
-                scale_Diabetes = 0.002, effect_sex_U = 0, effect_age_U = 0, 
+                intercept_B = 0, scale_death = 0.01, scale_dropout = 0.01, 
+                scale_Diabetes = 0.02, effect_sex_U = 0, effect_age_U = 0, 
                 effect_BMI_U = 0, effect_SBP_U = 0, effect_U_sex = 0, effect_age_sex = 0, 
                 effect_BMI_sex = 0, effect_SBP_sex = 0, effect_U_age = 0, 
                 effect_sex_age = 0, effect_BMI_age = 0, effect_SBP_age = 0, 

@@ -1,17 +1,13 @@
-run_rtmle_diabetes_population <- function(diabetes_population, intervals = seq(0, 60, 6), time_horizons = 30,...){
+run_rtmle_diabetes_population <- function(diabetes_population, time_grid, time_horizons,...){
     if (FALSE){
         tar_load_globals()
         tar_load(diabetes_population)
+        time_horizons = 12
+        time_grid = seq(0,12,1)
+        learner = "learn_glmnet"
     }
     setkey(diabetes_population,id,time,event)
-    time_horizons <- match(time_horizons, intervals) - 1
-    if (any(is.na(time_horizons))){
-        stop("time_horizons must be a subset of intervals")
-    }
-    if (any(time_horizons == 0)){
-        stop("time_horizons must not include 0")
-    }
-    x <- rtmle::rtmle_init(intervals = length(intervals)-1,
+    x <- rtmle::rtmle_init(time_grid = time_grid,
                            name_id = "id",
                            name_outcome = "MACE",
                            name_competing = "death",
@@ -44,7 +40,7 @@ run_rtmle_diabetes_population <- function(diabetes_population, intervals = seq(0
                               competing_data=diabetes_population[event == "death",.(id,date = time)],
                               timevar_data=tv)
     x <- rtmle::add_baseline_data(x,data=diabetes_population[first == 1,.(id,sex,age)])
-    x <- rtmle::long_to_wide(x,breaks = intervals,start_followup_date = 0)
+    x <- rtmle::long_to_wide(x,start_followup_date = 0)
     x <- rtmle::protocol(x,name = "Always_SGLT2",
                          intervention = data.table(time = x$intervention_nodes,"SGLT2" = factor(rep("1",length(intervals)-1),levels = c("0","1"))))
     x <- rtmle::protocol(x,name = "Always_DPP4",
