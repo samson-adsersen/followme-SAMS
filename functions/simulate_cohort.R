@@ -28,9 +28,8 @@ simulate_cohort <- function(n,
         })
         if (length(x$M)>0){
             if (sum(x$M)>0 && NROW(X)>0){
-                if (any(variables%in%names(X))){ ## Why if-statement needed?
-                    X = X[, setdiff(names(X),variables),drop = FALSE, with = FALSE]
-                }
+                # remove variables that should are generated in this call
+                X = X[, setdiff(names(X),variables),drop = FALSE, with = FALSE]
                 d <- data.table::setDT(lava::sim(x = x,X = X,...))
             }else{
                 d <- data.table::setDT(lava::sim(x = x,...))

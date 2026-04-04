@@ -3,9 +3,9 @@
 ## Author: Thomas Alexander Gerds
 ## Created: mar 20 2026 (06:32) 
 ## Version: 
-## Last-Updated: apr  1 2026 (09:36) 
+## Last-Updated: apr  2 2026 (07:34) 
 ##           By: Thomas Alexander Gerds
-##     Update #: 6
+##     Update #: 7
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -25,6 +25,11 @@ initialize_treatment <- function(X){
 }
 d <- do.call(simulate_cohort,
              c(list(n = 10,post_baseline_visit_hook = initialize_treatment),p))
+long_to_list(d,bsl_vars = c("sex","age","BMI"),
+             treatment_vars = c("A","B"),
+             measurement_vars = c("SBP"),
+             outcome = "Diabetes")
+
 bsl <- d[time == 0,c("id","sex","age","BMI","SBP","Diabetes","A","B")]
 
 

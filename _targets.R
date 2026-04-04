@@ -3,9 +3,9 @@
 ## Author: Thomas Alexander Gerds
 ## Created: okt 23 2025 (15:22) 
 ## Version: 
-## Last-Updated: apr  2 2026 (06:57) 
+## Last-Updated: apr  2 2026 (08:20) 
 ##           By: Thomas Alexander Gerds
-##     Update #: 155
+##     Update #: 158
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -36,7 +36,7 @@ list(
     tar_target(name = diabetes_population,{ 
         command = {
             cohort <- do.call("simulate_cohort",
-                              c(list(n = 30000),
+                              c(list(n = 3000),
                                 diabetes_polypharmacy_setting))
         }
     },cue = tar_cue(mode = "thorough")),

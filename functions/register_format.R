@@ -3,9 +3,9 @@
 ## Author: Thomas Alexander Gerds
 ## Created: apr  2 2026 (07:01) 
 ## Version: 
-## Last-Updated: apr  2 2026 (07:34) 
+## Last-Updated: apr  2 2026 (07:41) 
 ##           By: Thomas Alexander Gerds
-##     Update #: 12
+##     Update #: 14
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -26,11 +26,11 @@ register_format <- function(data,
     if (length(treatment_vars)>0){
         treatments <- lapply(treatment_vars, function(tv){
             d <- data[,c("id","time",tv),with = FALSE]
-            setnames(d,c("id","start_exposure","value"))
-            d[,end_exposure := shift(x = start_exposure,n = 1,type = "lead"),by = id]
+            setnames(d,c("id","start_date","value"))
+            d[,end_date := shift(x = start_date,n = 1,type = "lead"),by = id]
             # when treatment starts at the last time point in a time-series
             # then the duration is unknown
-            d <- d[!is.na(end_exposure)]
+            d <- d[!is.na(end_date)]
             d <- d[value != 0]
             d[,value := NULL]
             d[]
@@ -62,7 +62,7 @@ register_format <- function(data,
         events <- NULL
     }
     list(
-        baseline_data = if(length(bsl_vars)>0){data[first == TRUE,bsl_vars,with = FALSE]}else{NULL},
+        baseline_data = if(length(bsl_vars)>0){data[first == TRUE,c("id",bsl_vars),with = FALSE]}else{NULL},
         outcome_data = data[event == outcome,.(id,date = time)][!duplicated(id)],
         censored_data = data[last == 1 &event %in% c("visit","dropout"),.(id,date = time)],
         competing_data = data[event == "death",.(id,date = time)],
