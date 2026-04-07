@@ -28,14 +28,23 @@ simulate_cohort <- function(n,
         })
         if (length(x$M)>0){
             if (sum(x$M)>0 && NROW(X)>0){
-                # remove variables that should are generated in this call
-                X = X[, setdiff(names(X),variables),drop = FALSE, with = FALSE]
-                d <- data.table::setDT(lava::sim(x = x,X = X,...))
+                # extract autoregression parameters
+                if (length(variables)>0
+                    &&
+                    length(autovars <- intersect(paste0("auto_",variables),rownames(x$M)))>0){
+                    X <- X[, setdiff(names(X),paste0("auto_",variables)),drop = FALSE, with = FALSE]
+                    setnames(X,variables,paste0("auto_",variables))
+                }
+                # remove variables that should be drawn and not passed in this call
+                X <- X[, setdiff(names(X),variables),drop = FALSE, with = FALSE]
+                if (inherits(try(
+                    d <- data.table::setDT(lava::sim(x = x,X = X,...))                    
+                ),"try-error")) browser(skipCalls=TRUE)
             }else{
                 d <- data.table::setDT(lava::sim(x = x,...))
             }
             if (length(variables)>0){
-                d = d[,variables,with = FALSE]
+                d <- d[,variables,with = FALSE]
             }
         }else{
             d <- data.table()
