@@ -3,9 +3,9 @@
 ## Author: Thomas Alexander Gerds
 ## Created: mar 20 2026 (06:32) 
 ## Version: 
-## Last-Updated: apr  6 2026 (08:18) 
+## Last-Updated: apr 29 2026 (09:35) 
 ##           By: Thomas Alexander Gerds
-##     Update #: 14
+##     Update #: 19
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -23,9 +23,9 @@ initialize_treatment <- function(X){
     X[,randomized_treatment := NULL]
     X[]
 }
-p$parameter_values <- modifyList(p$parameter_values,list(effect_auto_A_A = 5,scale_dropout = 0))
-d <- do.call(simulate_cohort,
-             c(list(n = 10000,post_baseline_visit_hook = initialize_treatment),p))
+p$parameter_values <- modifyList(p$parameter_values,
+                                 list(effect_auto_A_A = 5,effect_auto_B_B = 2.5,scale_dropout = 0,scale_diabetes = 0.01))
+d <- do.call(simulate_cohort,c(list(n = 10000,post_baseline_visit_hook= initialize_treatment),p))
 rd <- register_format(d,bsl_vars = c("sex","age","BMI"),
                       treatment_vars = c("A","B"),
                       measurement_vars = c("SBP"),
@@ -37,11 +37,21 @@ x <- protocol(x,
               name = "use_A",
               intervention = data.table(time = x$intervention_nodes,
                                         "A" = factor(1,0:1)))
-x <- target(x,"diabetes_risk",protocols = "use_A")
+x <- protocol(x,
+              name = "use_A_not_B",
+              intervention = data.table(time = x$intervention_nodes,
+                                        "A" = factor(1,0:1),
+                                        "B" = factor(0,0:1)))
+x <- protocol(x,
+              name = "use_B",
+              intervention = data.table(time = x$intervention_nodes,
+                                        "B" = factor(1,0:1)))
+x <- target(x,"diabetes_risk",protocols = c("use_A","use_B","use_A_not_B"))
 x <- long_to_wide(x)
 x <- prepare_rtmle_data(x)
-x <- model_formula(x,exclusion_rules = list("A" = "B"))
-x <- run_rtmle(x,time_horizon = 1,learner = "learn_glmnet")
+x <- model_formula(x,exclusion_rules = list("A" = "B_0","B" = "A_0"))
+x <- run_rtmle(x,time_horizon = 1:5,learner = "learn_glmnet")
+summary(x)
 plot_adherence(x)
 
 
