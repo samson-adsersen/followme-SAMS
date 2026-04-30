@@ -1,0 +1,32 @@
+name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
+diabetes_polypharmacy_setting|stem|21d5c2c8309b1e9e|4efddaf3bcda4666|cac9140f446714e8|2112667069||t20573.4940132232s|s11109b|11109|rds|local|vector|||2.89|pakke 'lava' blev bygget under R version 4.4.3. pakke 'data.table' blev bygget under R version 4.4.3. pakke 'prodlim' blev bygget under R version 4.4.3. pakke 'foreach' blev bygget under R version 4.4.3. pakke 'ggplot2' blev bygget under R version 4.4.3. pakke 'plotly' blev bygget under R version 4.4.3|
+diabetes_population|stem|dc2f67c41fa3d0c8|30849ccc9008319d|9f1170b0ee788328|148134058||t20573.4940270251s|s566039b|566039|rds|local|vector|||1.05||
+sample_visit_gap|function|40b4c2ced1c44130
+make_and_write_diabetes_data|function|f1c0b9029dbbe12f
+make_hazard_model|function|1a2a864a3a615c0c
+make_regression_model|function|cd5bb5de6effb37e
+get_rtmle_example_setting|function|ce6d81c3deb5d9b6
+initialize_parameter_values|function|586942daad58b6bb
+get_bsl_setting|function|bd3808299379221d
+make_predictor_update_model|function|457ba37c58a1e3f8
+merge_pars|function|83c5acf7575ba701
+make_visit_model|function|52b9d54c9f7c58ce
+tar_performance|function|ff89a12040443dcc
+make_treatment_update_model|function|10603c5043cccc8b
+calculate_interventional_risks|function|e2187fac41aa0bb0
+get_alcohol_setting|function|ed9b13062c3c3239
+get_conf_setting|function|4dbe0adfc902bc24
+run_aalen_johansen_diabetes_population|function|9e4f8845f8080f4e
+register_format|function|3a316dab9f935bfa
+get_diabetes_polypharmacy_setting|function|598c723f9e4e9791
+plot_estimate|function|64029d4b4ecd2e58
+run_ice_ipcw|function|a9eb52f907ec4ab0
+get_null_setting|function|94a0ad9ae0d8fc93
+get_register_data|function|7833c825544dd940
+make_binary_variables_model|function|13542186271cc488
+simulate_cohort|function|0e1db6c35661b01e
+run_rtmle_diabetes_population|function|b433db9b539507cb
+diabetes_sim_data|stem|c5c72b8ec9852849|56f5fc28b33d1efa|d28d468fbfe099f5|-1022378353|data/diabetes_sim_data.csv|t20573.4960381941s|s2100643b|2100643|file|local|vector|||1.08||
+interventional_risks_diabetes_population|stem|33c232d018feef26|dea895017b8708d7|2e7f6446d84bc9ab|-594514663||t20573.4975942845s|s512b|512|rds|local|vector|||134.37||
+aalen_johansen_diabetes_population|stem|e57e6e8a3992dce5|2293e72d322da2c6|a039ed243a2aa109|-150063116||t20573.4975991517s|s2453b|2453|rds|local|vector|||0.24||
+ice_ipcw_diabetes_population|stem||96d0ae9b1d8b19e6|92637188a79fb039|-2078751946||t20573.4976579363s||0|rds|local|vector|||5.02|coercing argument of type 'double' to logical|NA values in baseline propensity scores.
