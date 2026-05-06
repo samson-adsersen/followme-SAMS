@@ -1,0 +1,39 @@
+### _targets.R --- 
+#----------------------------------------------------------------------
+## Author: Samson Alfred Adsersen
+## Created: May  6 2026 (14:22) 
+## Version: 
+## Last-Updated: May  6 2026 (14:27) 
+##           By: Samson Alfred Adsersen
+##     Update #: 1
+#----------------------------------------------------------------------
+## 
+### Commentary: 
+## 
+### Change Log:
+#----------------------------------------------------------------------
+## 
+### Code:
+
+library(targets)
+library(tarchetypes)
+
+list(
+
+  tarchetypes::tar_map_rep(
+    name = sim_results,
+    command = run_one_simulation(seed = .rep),
+    batches = 100
+  ),
+
+  tar_combine(
+    combined_results,
+    sim_results
+  ),
+
+  tar_target(results,
+             command = ggplot(combined_results, aes(y = estimate)) + geom_boxplot())
+)
+
+######################################################################
+### _targets.R ends here

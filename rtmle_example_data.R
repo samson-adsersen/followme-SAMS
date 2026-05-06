@@ -3,9 +3,9 @@
 ## Author: Thomas Alexander Gerds
 ## Created: mar 20 2026 (06:32) 
 ## Version: 
-## Last-Updated: apr 29 2026 (09:35) 
-##           By: Thomas Alexander Gerds
-##     Update #: 19
+## Last-Updated: apr 30 2026 (14:14) 
+##           By: SADS0006
+##     Update #: 20
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -46,11 +46,14 @@ x <- protocol(x,
               name = "use_B",
               intervention = data.table(time = x$intervention_nodes,
                                         "B" = factor(1,0:1)))
-x <- target(x,"diabetes_risk",protocols = c("use_A","use_B","use_A_not_B"))
+x <- target(x,"diabetes_risk",protocols = c("use_A"))#,"use_B","use_A_not_B"))
 x <- long_to_wide(x)
 x <- prepare_rtmle_data(x)
 x <- model_formula(x,exclusion_rules = list("A" = "B_0","B" = "A_0"))
-x <- run_rtmle(x,time_horizon = 1:5,learner = "learn_glmnet")
+x <- run_rtmle(x,time_horizon = 3,learner = "learn_glmnet")
+# SAMS TODO: setup targets in a different folder then use tarchetypes::tar_map_rep to run 100 estimates in 100 different data sets
+#            use tar_combine and then show boxplot of the 100 estimates
+
 summary(x)
 plot_adherence(x)
 
