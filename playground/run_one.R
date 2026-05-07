@@ -3,9 +3,9 @@
 ## Author: Samson Alfred Adsersen
 ## Created: May  6 2026 (14:16) 
 ## Version: 
-## Last-Updated: May  6 2026 (15:49) 
-##           By: Samson Alfred Adsersen
-##     Update #: 19
+## Last-Updated: maj  7 2026 (15:00) 
+##           By: SADS0006
+##     Update #: 33
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -22,20 +22,7 @@ initialize_treatment <- function(X){
     X[]
 }
 
-run_one_simulation <- function(seed, n = 10000) {
-  set.seed(seed)
-
-  p <- get_rtmle_example_setting()
-
-  p$parameter_values <- modifyList(
-    p$parameter_values,
-    list(
-      effect_auto_A_A = 5,
-      effect_auto_B_B = 2.5,
-      scale_dropout = 0,
-      scale_diabetes = 0.01
-    )
-  )
+run_one_simulation <- function(p, learner = "learn_glmnet", n = 10000) {
 
   d <- do.call(
     simulate_cohort,
@@ -83,21 +70,21 @@ run_one_simulation <- function(seed, n = 10000) {
                                           "B" = factor(1,0:1)))
 
   x <- target(x, "diabetes_risk",
-              protocols = c("use_A",
-                            "use_B"))
+              protocols = c("use_A","use_B"))
                             #"use_A_not_B"))
   x <- long_to_wide(x)
   x <- prepare_rtmle_data(x)
   x <- model_formula(x, exclusion_rules = list("A" = "B_0", "B" = "A_0"))
-  x <- run_rtmle(x, time_horizon = 3, learner = "learn_glmnet")
+  x <- run_rtmle(x, time_horizon = 3, learner = learner)
 
+  result <- x$estimate$Main_analysis
+    
   out <- data.table::data.table(
-                         estimate = summary(x)$Estimate,
-                         seed = seed)
+         difference = result$Estimate[1]-result$Estimate[2],
+         additional = result)
   out[]
   
 }
-
 
 ######################################################################
 ### run_one.R ends here
