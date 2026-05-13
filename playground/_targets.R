@@ -98,7 +98,7 @@ list(
                              fun = "learn_glmnet",
                              alpha = alpha,
                              selector = selector)
-                         message(learner$name)
+                         # message(learner$name)
                          run_one_simulation(
                              setting,
                              learner = learner,
