@@ -27,4 +27,4 @@
 *.knit.md
 
 /_targets/
-/data/
+/data/"*.swp" 

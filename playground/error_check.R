@@ -3,9 +3,9 @@
 ## Author: 
 ## Created: maj  7 2026 (14:22) 
 ## Version: 
-## Last-Updated: maj  7 2026 (14:59) 
+## Last-Updated: maj 21 2026 (09:22) 
 ##           By: SADS0006
-##     Update #: 2
+##     Update #: 3
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -17,7 +17,7 @@
 
 # FOR THOMAS. THIS REPRODUCES THE ERROR
 
-tar_setting <- tar_read(setting)
+setting <- tar_read(setting)
 
 .Random.seed <- c(10403L, 624L, -33935195L, 1182160162L, -1003035077L, -807248832L, 
 1395859265L, 1472680974L, -1108277961L, 1551628300L, 1391082909L, 
@@ -150,7 +150,7 @@ learner <- list(name = "glmnet_1se_0.5",
                 fun = "learn_glmnet",
                 alpha = 0.5,
                 selector = "1se")
-run_one_simulation(tar_setting,
+run_one_simulation(setting,
                    learner =  learner,
                    n = 200)
 

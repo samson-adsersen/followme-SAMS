@@ -3,9 +3,9 @@
 ## Author: Samson Alfred Adsersen
 ## Created: May  6 2026 (14:22) 
 ## Version: 
-## Last-Updated: maj  7 2026 (14:58) 
+## Last-Updated: jun  2 2026 (14:22) 
 ##           By: SADS0006
-##     Update #: 72
+##     Update #: 81
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -14,6 +14,9 @@
 #----------------------------------------------------------------------
 ## 
 ### Code:
+
+# Setwd if not done already
+## setwd("c:/Users/sads0006/Desktop/followme-SAMS/playground/")
 
 # Packages (remember to set working directory)
 library(targets)
@@ -33,6 +36,7 @@ list(
     tar_target(
         name = setting,
         command = {
+            
             p <- get_rtmle_example_setting()
             p$parameter_values <- modifyList(
                 p$parameter_values,
@@ -40,7 +44,8 @@ list(
                     effect_auto_A_A = 5,
                     effect_auto_B_B = 2.5,
                     scale_dropout = 0,
-                    scale_diabetes = 0.01))
+                    scale_Diabetes = 0.01))
+            
             p}),
 
     ## tarchetypes::tar_map_rep(
@@ -109,7 +114,7 @@ list(
                                                        "1se",
                                                        "undersmooth"),
                                           alpha = c(0, 0.5, 1)),
-                     reps = 10),
+                     reps = 2),
 
     tar_target(
         boxplot_estimates,
