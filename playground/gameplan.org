@@ -20,7 +20,8 @@ scale_dropout = 0 (In general goes to the maximum amount of events,
 max_follow = 6, but dropouts still occur for most)
 scale_dropout > 0 (Increasing rate of dropout events)
 
-* TODO Randomized treatment Diabetes data generation (similar time-series to Kathrine data)
+* DONE Randomized treatment Diabetes data generation (similar time-series to Kathrine data)
+CLOSED: [2026-06-04 to 13:30]
 - Create setting p (distributions/schedule/parameters/effects) that
   will mimick time-series of LEADER study data, through simulate
   cohort. (EXAMPLE SETTING DONE). First try shared with Thomas.
@@ -41,5 +42,14 @@ scale_dropout > 0 (Increasing rate of dropout events)
   test of get_DMreg()).
 - What makes sense to make here. Should it be some population
   with some percentage chance of getting a diabetes entry.
+
+** How does the typical history look?
+Most likely they get diagnosis/lab first then prescription. No foot first
+right? What about the others. Maybe look at 3740 for shape and overview
+of the data.
+
+Need data like: MFR, PDB, LPR, LMDB, LABKA, (SSR, DVDD)
+
+
 
 * Other thing causal changes in treatment

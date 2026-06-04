@@ -19,7 +19,7 @@ initialize_parameter_values <- function(baseline_variables,
     names(variances) <- paste0("variance_", names(variances))
     intercepts <- sapply(vars,function(v){intercept_value})
     names(intercepts) <- paste0("intercept_",names(intercepts))
-    events <- c(absorbing_events,intermediate_events)
+    events <- names(c(absorbing_events,intermediate_events))
     scales <- sapply(events,function(v){scale_value})
     names(scales) <- paste0("scale_",names(scales))
 
@@ -28,9 +28,6 @@ initialize_parameter_values <- function(baseline_variables,
     visit_schedule <- names(visit_schedule)
     visit_events <- names(visit_events)
     visit_measurements <- names(visit_measurements)
-    intermediate_events <- names(intermediate_events)
-    absorbing_events <- names(absorbing_events)
-    events <- names(events)
 
     construct_effects <- function(vector1,vector2,effect_value){
         combinations <- data.table::setDT(expand.grid(vector1, vector2,stringsAsFactors = FALSE))

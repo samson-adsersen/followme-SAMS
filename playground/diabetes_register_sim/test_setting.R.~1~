@@ -1,11 +1,11 @@
-### LMDB_setting.R --- 
+### test_setting.R --- 
 #----------------------------------------------------------------------
 ## Author: 
-## Created: jun  4 2026 (12:41) 
+## Created: jun  4 2026 (13:53) 
 ## Version: 
 ## Last-Updated: jun  4 2026 (13:55) 
 ##           By: SADS0006
-##     Update #: 4
+##     Update #: 1
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -15,8 +15,8 @@
 ## 
 ### Code:
 
-LMDB_setting <- function(){
-    
+test_setting <- function() {
+
     # Maximum amount of followup events in the time-series
     max_follow <- 24
 
@@ -62,13 +62,10 @@ LMDB_setting <- function(){
     # Distribution of visits.
     visit_schedule <- list(
         mean = 12, sd = 3, skip = 0
-    )
+    )    
 
-    # Have to make visits dependent on diagnosis right. So other
-    # events have to happen for regular visits to happen.
-
-    
 }
 
+
 ######################################################################
-### LMDB_setting.R ends here
+### test_setting.R ends here
