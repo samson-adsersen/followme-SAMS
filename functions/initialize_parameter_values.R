@@ -18,9 +18,9 @@ initialize_parameter_values <- function(baseline_variables,
     names(variances) <- paste0("variance_", names(variances))
     intercepts <- sapply(vars,function(v){intercept_value})
     names(intercepts) <- paste0("intercept_",names(intercepts))
+    events <- c(absorbing_events,intermediate_events)
     scales <- sapply(events,function(v){scale_value})
     names(scales) <- paste0("scale_",names(scales))
-    events <- c(absorbing_events,intermediate_events)
 
     baseline_variables <- names(baseline_variables)
     baseline_visit <- names(baseline_visit)

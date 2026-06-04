@@ -23,10 +23,22 @@ scale_dropout > 0 (Increasing rate of dropout events)
 * TODO Randomized treatment Diabetes data generation (similar time-series to Kathrine data)
 - Create setting p (distributions/schedule/parameters/effects) that
   will mimick time-series of LEADER study data, through simulate
-  cohort. (MIGHT BE DONE)
+  cohort. (MIGHT BE DONE). First try shared with Thomas.
 
 * TODO Simulate Diabetes register type data
 - create setting with appropriate variables/distributions/events etc
   making timeseries that mimicks register data.
+
+** Overview
+- First step is to recreate simulated timeseries of correct
+  names/variables. Trying one register at a time (a lot of events
+  may be NULL).
+  Ok so thing is, if they are independently simulated how does
+  one match ids from different registers. Does not really make
+  sense to do it like that i suppose. Make together (entire
+  history of person is followed) such that the progression of
+  the registers is alligned.
+- What makes sense to make here. Should it be some population
+  with some percentage chance of getting a diabetes entry.
 
 * Other thing causal changes in treatment
