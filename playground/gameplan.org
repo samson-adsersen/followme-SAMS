@@ -23,7 +23,7 @@ scale_dropout > 0 (Increasing rate of dropout events)
 * TODO Randomized treatment Diabetes data generation (similar time-series to Kathrine data)
 - Create setting p (distributions/schedule/parameters/effects) that
   will mimick time-series of LEADER study data, through simulate
-  cohort. (MIGHT BE DONE). First try shared with Thomas.
+  cohort. (EXAMPLE SETTING DONE). First try shared with Thomas.
 
 * TODO Simulate Diabetes register type data
 - create setting with appropriate variables/distributions/events etc
@@ -37,7 +37,8 @@ scale_dropout > 0 (Increasing rate of dropout events)
   one match ids from different registers. Does not really make
   sense to do it like that i suppose. Make together (entire
   history of person is followed) such that the progression of
-  the registers is alligned.
+  the registers is alligned - Then split registers (if made for
+  test of get_DMreg()).
 - What makes sense to make here. Should it be some population
   with some percentage chance of getting a diabetes entry.
 

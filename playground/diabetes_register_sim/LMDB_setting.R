@@ -3,9 +3,9 @@
 ## Author: 
 ## Created: jun  4 2026 (12:41) 
 ## Version: 
-## Last-Updated: jun  4 2026 (13:08) 
+## Last-Updated: jun  4 2026 (13:17) 
 ##           By: SADS0006
-##     Update #: 2
+##     Update #: 3
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -22,17 +22,18 @@ LMDB_setting <- function(){
 
     # Baseline variables and their distributions
     baseline_variables <- list(
-        
+        diagnosis = "lognormal"
     )
 
     # List of events ending the time-series (death/dropout/censoring)
     absorbing_events <- list(
-        
+        death = "Weibull",
+        dropout = "Weibull"
     )
 
     # List of other possible events between visits.
     intermediate_events <- list(        
-
+        foot = "binomial"
     )
 
     # What is measured at a visit
