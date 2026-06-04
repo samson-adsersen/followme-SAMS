@@ -6,16 +6,30 @@ initialize_parameter_values <- function(baseline_variables,
                                         intermediate_events,
                                         absorbing_events,
                                         intercept_value = 0,
+                                        variance_value = 1,
                                         scale_value = 1/100,
                                         effect_value = 0){
-    events <- c(absorbing_events,intermediate_events)
-    intercepts <- sapply(c(baseline_variables,
-                           baseline_visit,
-                           visit_measurements,
-                           visit_events),function(v){intercept_value})
+    vars <- c(baseline_variables,
+              baseline_visit,
+              visit_measurements,
+              visit_events)
+    normal <- vars[vars == "normal"]
+    variances <- sapply(normal, function(v){variance_value})
+    names(variances) <- paste0("variance_", names(variances))
+    intercepts <- sapply(vars,function(v){intercept_value})
     names(intercepts) <- paste0("intercept_",names(intercepts))
     scales <- sapply(events,function(v){scale_value})
     names(scales) <- paste0("scale_",names(scales))
+    events <- c(absorbing_events,intermediate_events)
+
+    baseline_variables <- names(baseline_variables)
+    baseline_visit <- names(baseline_visit)
+    visit_schedule <- names(visit_schedule)
+    visit_events <- names(visit_events)
+    visit_measurements <- names(visit_measurements)
+    intermediate_events <- names(intermediate_events)
+    absorbin_events <- names(absorbing_events)
+
     construct_effects <- function(vector1,vector2,effect_value){
         combinations <- data.table::setDT(expand.grid(vector1, vector2,stringsAsFactors = FALSE))
         # remove self-effects
@@ -23,7 +37,7 @@ initialize_parameter_values <- function(baseline_variables,
         setNames(rep(effect_value, nrow(combinations)), paste0("effect_",apply(combinations, 1, paste, collapse = "_")))
     }
     effects_baseline_baseline <- construct_effects(baseline_variables,baseline_variables,effect_value = effect_value)
-    if (length(baseline_visit)){
+    if (length(baseline_visit)>0){
         effects_baseline_baseline_visit <- construct_effects(baseline_variables,baseline_visit,effect_value = effect_value)
     }
 
@@ -45,6 +59,7 @@ initialize_parameter_values <- function(baseline_variables,
         effects_timevar <- NULL
     }
     as.list(c(intercepts,
+              variances,
               scales,
               effects_baseline_baseline,
               effects_baseline_baseline_visit,

@@ -3,9 +3,9 @@
 ## Author: 
 ## Created: jun  2 2026 (12:44) 
 ## Version: 
-## Last-Updated: jun  2 2026 (14:19) 
+## Last-Updated: jun  4 2026 (12:34) 
 ##           By: SADS0006
-##     Update #: 4
+##     Update #: 12
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -115,19 +115,19 @@ get_LEADER_setting <- function(){
     # Generate initial parameter values list
     #if (FALSE){
     ipv = initialize_parameter_values(
-        baseline_variables = names(baseline_variables),
-        absorbing_events = names(absorbing_events),
-        baseline_visit = names(baseline_visit),
-        intermediate_events = names(intermediate_events),
-        visit_measurements = names(visit_measurements),
-        visit_events = names(visit_events))
+        baseline_variables = baseline_variables,
+        absorbing_events = absorbing_events,
+        baseline_visit = baseline_visit,
+        intermediate_events = intermediate_events,
+        visit_measurements = visit_measurements,
+        visit_events = visit_events,
+        visit_schedule = visit_schedule)
     #}
 
-    # Randomized baseline treatment
+    # Randomized baseline treatment (NOT USED)
     randomize_baseline_treatment <- function(X){
         X[,GLP1RA := 1*(start_GLP1RA == 1)]
         X[,SGLT2i := 1*(start_SGLT2i == 1 & start_GLP1RA == 0)]
-        X[,DPP4:=1*(start_SGLT2 == 0 & start_GLP1 == 0)]
         X[,start_GLP1 := NULL]
         X[,start_SGLT2 := NULL]
         X[]
@@ -135,9 +135,9 @@ get_LEADER_setting <- function(){
 
     # Output
     list(
-         max_follow = max_follow,
+        max_follow = max_follow,
         baseline_variables = baseline_variables,
-        baseline_visit = list(randomized_treatment = "binomial"),
+        baseline_visit = baseline_visit,
         absorbing_events = absorbing_events,
         intermediate_events = intermediate_events,
         visit_measurements = visit_measurements,
@@ -149,16 +149,18 @@ get_LEADER_setting <- function(){
 }
 
 if (FALSE) {
-      d <- do.call(
-    simulate_cohort,
-    c(
-      list(
-        n = n,
-        post_baseline_visit_hook = randomize_baseline_treatment
-      ),
-      p
+    
+    d <- do.call(
+        simulate_cohort,
+        c(
+            list(
+                n = 1000#,
+                #post_baseline_visit_hook = randomize_baseline_treatment
+            ),
+            p
+        )
     )
-  )
+    
 }
 
 

@@ -23,7 +23,7 @@ scale_dropout > 0 (Increasing rate of dropout events)
 * TODO Randomized treatment Diabetes data generation (similar time-series to Kathrine data)
 - Create setting p (distributions/schedule/parameters/effects) that
   will mimick time-series of LEADER study data, through simulate
-  cohort.
+  cohort. (MIGHT BE DONE)
 
 * TODO Simulate Diabetes register type data
 - create setting with appropriate variables/distributions/events etc
