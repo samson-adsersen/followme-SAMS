@@ -30,6 +30,7 @@ initialize_parameter_values <- function(baseline_variables,
     visit_measurements <- names(visit_measurements)
     intermediate_events <- names(intermediate_events)
     absorbing_events <- names(absorbing_events)
+    events <- names(events)
 
     construct_effects <- function(vector1,vector2,effect_value){
         combinations <- data.table::setDT(expand.grid(vector1, vector2,stringsAsFactors = FALSE))
