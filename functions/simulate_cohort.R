@@ -129,6 +129,10 @@ simulate_cohort <- function(n,
     
     while (nrow(last_entry)>0) {
 
+        ## TJEK: Need to save last visit, somehow to stop it from
+        ## competing with the other events - resetting the schedule
+        ## timer. This is where it needs to change i think.
+
         ## draw time of next scheduled visit, allowing for skipped visits
         nrisk <- nrow(last_entry)  
         skipped_visits <- rbinom(n = nrisk, 3, visit_schedule[["skip"]])

@@ -14,9 +14,9 @@ initialize_parameter_values <- function(baseline_variables,
               baseline_visit,
               visit_measurements,
               visit_events)
-    normal <- vars[vars == "normal"]
+    normal <- vars[vars == "normal" | vars == "lognormal"]
     variances <- sapply(normal, function(v){variance_value})
-    names(variances) <- paste0("variance_", names(variances))
+    names(variances) <- paste0("var_", names(variances))
     intercepts <- sapply(vars,function(v){intercept_value})
     names(intercepts) <- paste0("intercept_",names(intercepts))
     events <- names(c(absorbing_events,intermediate_events))
@@ -28,16 +28,29 @@ initialize_parameter_values <- function(baseline_variables,
     visit_schedule <- names(visit_schedule)
     visit_events <- names(visit_events)
     visit_measurements <- names(visit_measurements)
+    intermediate_events <- names(intermediate_events)
 
-    construct_effects <- function(vector1,vector2,effect_value){
-        combinations <- data.table::setDT(expand.grid(vector1, vector2,stringsAsFactors = FALSE))
+    construct_effects <- function(vector1,
+                                  vector2,
+                                  effect_value){
+        combinations <- data.table::setDT(
+                            expand.grid(vector1,vector2,stringsAsFactors = FALSE))
         # remove self-effects
         combinations <- combinations[Var1 != Var2]
-        setNames(rep(effect_value, nrow(combinations)), paste0("effect_",apply(combinations, 1, paste, collapse = "_")))
+        setNames(rep(effect_value, nrow(combinations)),
+                 paste0("effect_",apply(combinations,
+                                        1, paste,
+                                        collapse = "_")))
     }
-    effects_baseline_baseline <- construct_effects(baseline_variables,baseline_variables,effect_value = effect_value)
+    
+    effects_baseline_baseline <- construct_effects(
+        baseline_variables,
+        baseline_variables,
+        effect_value = effect_value)
     if (length(baseline_visit)>0){
-        effects_baseline_baseline_visit <- construct_effects(baseline_variables,baseline_visit,effect_value = effect_value)
+        effects_baseline_baseline_visit <- construct_effects(baseline_variables,
+                                                             baseline_visit,
+                                                             effect_value = effect_value)
     }
 
     effects_baseline_events <- construct_effects(baseline_variables,

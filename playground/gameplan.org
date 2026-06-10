@@ -13,6 +13,13 @@ p contains,
   (effect, effects of different parameters on eachother,
   effects of different parameters/events on likelihood of events,
   as well as treatments on the parameters/events)
+Effects.
+Variables --> Variables
+Variables --> Events (intermediate/absorbing)
+Intermediate --> Events
+No
+Events --> Variables? Why should measurements in general not change
+as a result of an events?
 
 ** What happens to simulated data for different values of scale_dropout
 scale_dropout < 0 (No other events past baseline)
@@ -25,6 +32,43 @@ CLOSED: [2026-06-04 to 13:30]
 - Create setting p (distributions/schedule/parameters/effects) that
   will mimick time-series of LEADER study data, through simulate
   cohort. (EXAMPLE SETTING DONE). First try shared with Thomas.
+
+* DONE Need to modify to handle variance different from one apparently.
+CLOSED: [2026-06-10 on 10:10]
+
+* TODO Visits do not seem to follow the schedule. Check it out.
+Okay seems to me that the scheduling in some sense "fails" - at least
+if the intention is to have visits every 6 months. However they are
+instead spaced such that the visit happens exactly 6 months after the
+previous event. Is this the intention? ASK thomas.
+
+Also weird that visits "compete" with events...
+Try fix? Remember to mark changes in functionality.
+
+Should the biomarkers be updated at every type of event?
+
+Have made baseline treatment (either lira or placebo) randomized.
+
+
+
+** Talk with Kathrine at some point
+- Have rough outline from looking at the leader targets pipeline.
+  Have made assumptions about distributions of differnet variables.
+
+- I think the only measurement variables listed in the pipeline
+  is a1c level/change, which i think works nicely in the simulation.
+  Should the rest of the baseline biomarkers be updated as well?
+
+- Then generally what effects between covariates/events are relevant.
+
+- Is there a large difference in the likelihood between events
+
+What do i need specifically?
+- Mean/variance values that make sense.
+- Scales of event probabilities (Maybe relative is enough)
+- Changes in distributions?
+- Update biomarkers?
+
 
 * TODO Simulate Diabetes register type data
 - create setting with appropriate variables/distributions/events etc

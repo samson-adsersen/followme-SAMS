@@ -56,3 +56,4 @@ get_rtmle_example_setting <- function(){
          visit_schedule = visit_schedule,
          parameter_values = ipv)
 }
+5
