@@ -1,32 +1,18 @@
-### _targets.R --- 
-#----------------------------------------------------------------------
-## Author: Samson Alfred Adsersen
-## Created: May  6 2026 (14:22) 
-## Version: 
-## Last-Updated: jun  4 2026 (15:01) 
-##           By: SADS0006
-##     Update #: 84
-#----------------------------------------------------------------------
-## 
-### Commentary: 
-## 
-### Change Log:
-#----------------------------------------------------------------------
-## 
-### Code:
+# Set the working directory
+setwd("c:/Users/sads0006/Desktop/followme-SAMS/playground")
 
-# Setwd if not done already
-setwd("c:/Users/sads0006/Desktop/followme-SAMS/playground/")
-
-# Packages (remember to set working directory)
+# Library targets
 library(targets)
 library(tarchetypes)
 
-# Load dependencies of outside pipeline
-oldwd <- getwd()
+# Load globals
+olddir <- getwd()
 setwd("..")
-targets::tar_load_globals()
-setwd(oldwd)
+tar_load_globals()
+setwd(olddir)
+
+# Load rtmle functions
+tar_source("c:/Users/sads0006/Desktop/rtmle/R/simulate_cohort.R")
 
 # Load run_one_sim function
 tar_source("run_one.R")

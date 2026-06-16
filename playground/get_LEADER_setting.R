@@ -3,9 +3,9 @@
 ## Author: 
 ## Created: jun  2 2026 (12:44) 
 ## Version: 
-## Last-Updated: jun 10 2026 (14:30) 
+## Last-Updated: jun 16 2026 (14:01) 
 ##           By: SADS0006
-##     Update #: 28
+##     Update #: 32
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -14,6 +14,15 @@
 #----------------------------------------------------------------------
 ## 
 ### Code:
+
+
+# Randomized baseline treatment (NOT USED)
+randomize_baseline_treatment <- function(X){
+    X[,lira := 1*(randomized_treatment == 1)]
+    X[,placebo := 1*(randomized_treatment == 0)]
+    X[]
+}
+
 
 get_LEADER_setting <- function(){
 
@@ -109,7 +118,8 @@ get_LEADER_setting <- function(){
     # Thomas says here 0,1,3,6,12 and so on. Should it be random?
     # Change later he says. Have made 6 month grid. Add 1,3 in post?
     visit_schedule <- list(
-        mean = 6, sd = 0, skip = 0
+        mean = 6, sd = 0, skip = 0,
+        schedule = c(1,2,3,4,5,6,7,8,9,10)
     )
 
 
@@ -138,13 +148,6 @@ get_LEADER_setting <- function(){
         visit_measurements = visit_measurements,
         visit_events = visit_events,
         visit_schedule = visit_schedule)
-
-    # Randomized baseline treatment (NOT USED)
-    randomize_baseline_treatment <- function(X){
-        X[,lira := 1*(randomized_treatment == 1)]
-        X[,placebo := 1*(randomized_treatment == 0)]
-        X[]
-    }
 
     # Output
     list(

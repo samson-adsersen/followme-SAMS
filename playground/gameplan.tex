@@ -1,0 +1,133 @@
+% Created 2026-06-16 ti 10:43
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{array}
+\usepackage[T1]{fontenc}
+\usepackage{natbib}
+\date{\today}
+\title{}
+\begin{document}
+
+\tableofcontents
+
+\section{Notes}
+\label{sec:orgd88496e}
+
+\subsection{Input for simulate cohort}
+\label{sec:orgbf1423a}
+p contains,
+\begin{itemize}
+\item Maximum number of events for the sim.
+\item How baseline parameter values are distributed
+\item How events/visits are distributed.
+\item parameter values:
+(intercept, relating to expected values of parameters and the
+timeline of events)
+(scale, relating to likelihood of events)
+(effect, effects of different parameters on eachother,
+effects of different parameters/events on likelihood of events,
+as well as treatments on the parameters/events)
+\end{itemize}
+Effects.
+Variables --> Variables
+Variables --> Events (intermediate/absorbing)
+Intermediate --> Events
+No
+Events --> Variables? Why should measurements in general not change
+as a result of an events?
+\subsection{What happens to simulated data for different values of scale\textsubscript{dropout}}
+\label{sec:org4c0d2a0}
+scale\textsubscript{dropout} < 0 (No other events past baseline)
+scale\textsubscript{dropout} = 0 (In general goes to the maximum amount of events,
+max\textsubscript{follow} = 6, but dropouts still occur for most)
+scale\textsubscript{dropout} > 0 (Increasing rate of dropout events)
+\section{{\bfseries\sffamily DONE} Randomized treatment Diabetes data generation (similar time-series to Kathrine data)}
+\label{sec:org8c759f1}
+\begin{itemize}
+\item Create setting p (distributions/schedule/parameters/effects) that
+will mimick time-series of LEADER study data, through simulate
+cohort. (EXAMPLE SETTING DONE). First try shared with Thomas.
+\end{itemize}
+\section{{\bfseries\sffamily DONE} Need to modify to handle variance different from one apparently.}
+\label{sec:org5b6b2e9}
+\section{{\bfseries\sffamily TODO} Visits do not seem to follow the schedule. Check it out.}
+\label{sec:orgf234d6a}
+Okay seems to me that the scheduling in some sense "fails" - at least
+if the intention is to have visits every 6 months. However they are
+instead spaced such that the visit happens exactly 6 months after the
+previous event. Is this the intention? ASK thomas.
+
+Also weird that visits "compete" with events\ldots{}
+Try fix? Remember to mark changes in functionality.
+
+Should the biomarkers be updated at every type of event?
+
+Have made baseline treatment (either lira or placebo) randomized.
+\subsection{Talk with Kathrine at some point}
+\label{sec:org688313b}
+\begin{itemize}
+\item Have rough outline from looking at the leader targets pipeline.
+Have made assumptions about distributions of differnet variables.
+
+\item I think the only measurement variables listed in the pipeline
+is a1c level/change, which i think works nicely in the simulation.
+Should the rest of the baseline biomarkers be updated as well?
+
+\item Then generally what effects between covariates/events are relevant.
+
+\item Is there a large difference in the likelihood between events
+\end{itemize}
+
+What do i need specifically?
+\begin{itemize}
+\item Mean/variance values that make sense.
+\item Scales of event probabilities (Maybe relative is enough)
+\item Changes in distributions?
+\item Update biomarkers?
+\end{itemize}
+\section{{\bfseries\sffamily TODO} Simulate Diabetes register type data}
+\label{sec:orgaa5c950}
+\begin{itemize}
+\item create setting with appropriate variables/distributions/events etc
+making timeseries that mimicks register data.
+\end{itemize}
+\subsection{Overview}
+\label{sec:org6dec8d9}
+\begin{itemize}
+\item First step is to recreate simulated timeseries of correct
+names/variables. Trying one register at a time (a lot of events
+may be NULL).
+Ok so thing is, if they are independently simulated how does
+one match ids from different registers. Does not really make
+sense to do it like that i suppose. Make together (entire
+history of person is followed) such that the progression of
+the registers is alligned - Then split registers (if made for
+test of get\textsubscript{DMreg}()).
+\item What makes sense to make here. Should it be some population
+with some percentage chance of getting a diabetes entry.
+\end{itemize}
+\subsection{How does the typical history look?}
+\label{sec:orgcfaa026}
+Most likely they get diagnosis/lab first then prescription. No foot first
+right? What about the others. Maybe look at 3740 for shape and overview
+of the data.
+
+Need data like: MFR, PDB, LPR, LMDB, LABKA, (SSR, DVDD)
+\section{Other thing causal changes in treatment}
+\label{sec:org858473b}
+\end{document}
