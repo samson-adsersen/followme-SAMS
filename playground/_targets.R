@@ -12,7 +12,7 @@ tar_load_globals()
 setwd(olddir)
 
 # Load rtmle functions
-tar_source("c:/Users/sads0006/Desktop/rtmle/R/simulate_cohort.R")
+tar_source("c:/Users/sads0006/Desktop/rtmle-SAMS/R/simulate_cohort.R")
 
 # Load run_one_sim function
 tar_source("run_one.R")

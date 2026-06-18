@@ -36,18 +36,35 @@ CLOSED: [2026-06-04 to 13:30]
 * DONE Need to modify to handle variance different from one apparently.
 CLOSED: [2026-06-10 on 10:10]
 
-* TODO Visits do not seem to follow the schedule. Check it out.
-Okay seems to me that the scheduling in some sense "fails" - at least
-if the intention is to have visits every 6 months. However they are
-instead spaced such that the visit happens exactly 6 months after the
-previous event. Is this the intention? ASK thomas.
+* DONE Visits do not seem to follow the schedule. Check it out.
+CLOSED: [2026-06-18 to 09:38]
 
-Also weird that visits "compete" with events...
-Try fix? Remember to mark changes in functionality.
+* TODO Smaller sims. Naive risk estimate --> RTMLE
+Difference in effect between treatment and placebo. First for
+all same baseline, with continued treatment. Then for abrupt stop
+treatment. Look "Documentation.org"
 
-Should the biomarkers be updated at every type of event?
 
-Have made baseline treatment (either lira or placebo) randomized.
+* LEADER SIM Status
+- go through output effects on outcomes, for those that make sense
+- mean/variance values (i.e. distributions of the variables) cannot
+  be gotten from here. Have to look at the actual data.
+
+have to make input list effects for each scheduled time step (output
+of rtmle gives effects at each time-step)
+Insert hook in simulate cohort that updates the parameter used parameter
+values for the sim, based on where in time it is w.r.t. the schedule
+grid.
+
+Ok so want hooks that can:
+- group appropriate variables post baseline (done) - However
+  maybe they need there own variables to categorize effects.
+- update the linear coefficients given time step (from schedule)
+- Stop lira with some probability post visit (probably save as
+  stopped)
+
+
+
 
 
 
@@ -94,6 +111,4 @@ of the data.
 
 Need data like: MFR, PDB, LPR, LMDB, LABKA, (SSR, DVDD)
 
-
-
-* Other thing causal changes in treatment
+** Other thing causal changes in treatment

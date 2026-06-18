@@ -3,9 +3,9 @@
 ## Author: 
 ## Created: jun  2 2026 (12:44) 
 ## Version: 
-## Last-Updated: jun 16 2026 (14:01) 
+## Last-Updated: jun 18 2026 (13:12) 
 ##           By: SADS0006
-##     Update #: 32
+##     Update #: 49
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -16,12 +16,37 @@
 ### Code:
 
 
-# Randomized baseline treatment (NOT USED)
+# Grouping
+group_variables <- function(X){
+    X[, ':=' (
+        age60below = as.integer(age < 60),
+        age60to80 = as.integer(age >= 60 & age < 80),
+        age80to90 = as.integer(age >= 80 & age < 90),
+        age90above = as.integer(age >= 90)
+        )]
+    X[, diabetesduration_group := cut(
+            diabetesduration,
+            breaks = c(1,5,10,15,20,Inf),
+            labels = c("1-5 years",
+                       "5-10 years",
+                       "10-15 years",
+                       "15-20 years",
+                       "more than 20 years")
+        )]
+}
+
+# Randomized baseline treatment
 randomize_baseline_treatment <- function(X){
     X[,lira := 1*(randomized_treatment == 1)]
     X[,placebo := 1*(randomized_treatment == 0)]
     X[]
 }
+
+update_parameter_hook <- function(){
+    
+}
+
+
 
 
 get_LEADER_setting <- function(){
@@ -29,7 +54,7 @@ get_LEADER_setting <- function(){
     #-----------------------Parameters-----------------------------
 
     # Maximum time value in the series.
-    max_follow <- 100
+    max_follow <- 60
 
     # Baseline variables and their distributions
     baseline_variables <- list(
@@ -119,7 +144,8 @@ get_LEADER_setting <- function(){
     # Change later he says. Have made 6 month grid. Add 1,3 in post?
     visit_schedule <- list(
         mean = 6, sd = 0, skip = 0,
-        schedule = c(1,2,3,4,5,6,7,8,9,10)
+        schedule = c(1,3,seq(from = 6, to = max_follow, by = 6)),
+        minimum_time_between_visits = 1
     )
 
 
@@ -207,12 +233,17 @@ if (FALSE) {
     p$parameter_values$effect_stroke_cv.death <- 1/100
     p$parameter_values$effect_heart.failure_cv.death <- 1/100
 
+    # Visit schedule
+    p$visit_schedule$sd <- 1/10
+    p$visit_schedule$minimum_time_between_visits <- 1/10
+
     # Generate time-series based on setting - & potentially hooks
     d <- do.call(
         simulate_cohort,
         c(
             list(
                 n = 1000,#,
+                post_baseline_variables_hook = group_variables,
                 post_baseline_visit_hook = randomize_baseline_treatment
             ),
             p
@@ -228,10 +259,25 @@ if (FALSE) {
     d[,hba1c_level := hba1c_level+hba1c_change]
     d[,bmi := bmi+bmi_change]
     d[,egfr := egfr+egfr_change]
+
+
+    # Getting mean values from the effects object
+    x <- data.table::as.data.table(
+                         read.csv("c:/Users/sads0006/Desktop/followme-SAMS/playground/Data/u.csv")
+                     )
+    x[, outcome_base := sub("_[0-9]+$", "", outcome)]
+    
+    x_mean <- x[,
+                .(mean_beta = mean(beta),
+                  sd_beta = sd(beta),
+                  n_time = .N),
+                by = .(protocol, node, outcome_base, terms)
+                ]
+    x_mean <- x_mean[n_time == 9]
+
+    x_mean[protocol == "Lira" & outcome_base == "primary.outcome"]
     
 }
-
-
 
 
 

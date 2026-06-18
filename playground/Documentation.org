@@ -1,0 +1,35 @@
+
+* Simulation documentation
+
+** LEADER simulation setup
+
+Go through general setup for simulate cohort (Distributions
+and variables, hooks etc.)
+
+Then no effects yet. Output of LEADER data gives effects.
+Can we trust these - leads nicely into next points
+
+** Minimal simulation setup
+
+Details of simulation setup and effects. Explain first how
+data looks with continued randomized treatment. Then with
+abrupt stops. (Go through how hooks implemented)
+
+2 treatments, 1 visit, 1 outcome, same baseline
+2 treatments, few visits, 1 outcome, same baseline
+
+Should introduce different baseline? Might be beyond scope.
+
+*** Continued treatment
+
+Go through naive estimates (should work)
+
+Maybe good for reference to have rtmle estimate (should work)
+
+*** Abrupt stops in treatment
+
+Go through naive estiamtes (shouldn't work)
+
+then into rtmle estimate (should work)
+
+** Checking leader estimates?
