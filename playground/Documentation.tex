@@ -1,0 +1,67 @@
+% Created 2026-09-15 ti 09:10
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{array}
+\usepackage[T1]{fontenc}
+\usepackage{natbib}
+\date{\today}
+\title{}
+\begin{document}
+
+\tableofcontents
+
+\section{Simulation documentation}
+\label{sec:org4b5e02e}
+
+\subsection{LEADER simulation setup}
+\label{sec:org85cbb83}
+
+Go through general setup for simulate cohort (Distributions
+and variables, hooks etc.)
+
+Then no effects yet. Output of LEADER data gives effects.
+Can we trust these - leads nicely into next points
+\subsection{Minimal simulation setup}
+\label{sec:orgc5f26a2}
+
+Details of simulation setup and effects. Explain first how
+data looks with continued randomized treatment. Then with
+abrupt stops. (Go through how hooks implemented)
+
+randomized treatment to begin. And either randomized stops/
+starts or what?. Random dropout.
+
+2 treatments [lira(glutide) / placebo], 1 visit, 1 outcome, same baseline
+2 treatments, few visits, 1 outcome, same baseline
+
+Should introduce different baseline? Might be beyond scope.
+\subsubsection{Continued treatment}
+\label{sec:org838aba7}
+
+Go through naive estimate, N of outcomes / N total (should work)
+
+Maybe good for reference to have rtmle estimate (should work)
+\subsubsection{Abrupt stops in treatment}
+\label{sec:orgba15482}
+
+Go through naive estimates (shouldn't work)
+
+then into rtmle estimate (should work)
+\subsection{Checking leader estimates?}
+\label{sec:org0535517}
+\end{document}

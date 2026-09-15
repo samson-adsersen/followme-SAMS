@@ -61,7 +61,8 @@ Ok so want hooks that can:
   maybe they need there own variables to categorize effects.
 - update the linear coefficients given time step (from schedule)
 - Stop lira with some probability post visit (probably save as
-  stopped)
+  stopped). Might actually make more sense with lira stops and
+  starts?
 
 
 
@@ -100,7 +101,7 @@ What do i need specifically?
   sense to do it like that i suppose. Make together (entire
   history of person is followed) such that the progression of
   the registers is alligned - Then split registers (if made for
-  test of get_DMreg()).
+  test of DMreg algorithm).
 - What makes sense to make here. Should it be some population
   with some percentage chance of getting a diabetes entry.
 
@@ -112,3 +113,5 @@ of the data.
 Need data like: MFR, PDB, LPR, LMDB, LABKA, (SSR, DVDD)
 
 ** Other thing causal changes in treatment
+
+

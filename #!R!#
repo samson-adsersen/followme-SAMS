@@ -1,0 +1,832 @@
+
+R version 4.4.2 (2024-10-31 ucrt) -- "Pile of Leaves"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> setwd('c:/Users/sads0006/Desktop/followme-SAMS')
+> #------------------------Different-hooks---------------------------
++ 
++ # Randomized baseline treatment
++ randomize_baseline_treatment <- function(X){
++     X[,lira := 1*(randomized_treatment == 1)]
++     X[,placebo := 1*(randomized_treatment == 0)]
++     X[,randomized_treatment := NULL]
++ }
++ 
++ # Post visit medication stop
++ randomized_medication_stop <- function(X){
++     #X[]
++ }
+> get_minimal_setting <- function(){
++     #browser()
++     max_follow <- 1.5
++ 
++     baseline_variables <- list(
++         sex = "binomial",
++         age = "normal"
++     )
++ 
++     baseline_visit <- list(
++         randomized_treatment = "binomial"
++     )
++ 
++     absorbing_events <- list(
++         death = "Weibull",
++         dropout = "Weibull"
++     )
++     
++     intermediate_events <- list(
++         nausea.and.vomiting.symptoms = "Weibull" 
++     )
++ 
++     visit_measurements <- list(
++         hba1c_change = "normal"
++     )
++ 
++     visit_events <- list(
++         metformin = "binomial"
++     )
++ 
++     visit_schedule <- list(
++         mean = 1, sd = 0, skip = 0,
++         schedule = seq(from = 0, to = 10, by = 1),
++         minimum_time_between_visits = 0
++     )
++ 
++     ipv = initialize_parameter_values(
++         baseline_variables = baseline_variables,
++         absorbing_events = absorbing_events,
++         baseline_visit = baseline_visit,
++         intermediate_events = intermediate_events,
++         visit_measurements = visit_measurements,
++         visit_events = visit_events,
++         visit_schedule = visit_schedule)
++ 
++     list(
++         max_follow = max_follow,
++         baseline_variables = baseline_variables,
++         baseline_visit = baseline_visit,
++         absorbing_events = absorbing_events,
++         intermediate_events = intermediate_events,
++         visit_measurements = visit_measurements,
++         visit_events = visit_events,
++         visit_schedule = visit_schedule,
++         parameter_values = ipv
++     )
++ }
++ > p0 <- get_minimal_setting()
+Fejl i initialize_parameter_values(baseline_variables = baseline_variables,  : 
+  could not find function "initialize_parameter_values"
+> cd
+Fejl: objekt 'cd' blev ikke fundet
+> getwd()
+[1] "c:/Users/sads0006/Desktop/followme-SAMS"
+> tar_load_globals()
+Fejl i tar_load_globals() : could not find function "tar_load_globals"
+> targets::tar_load_globals()
+tar_source() only sources R scripts. Ignoring non-R files: functions/.DS_Store
+data.table 1.18.4 using 6 threads (see ?getDTthreads).  Latest news: r-datatable.com
+p0 <- get_minimal_setting()
+
+VedhÃ¦fter pakke: 'rtmle'
+
+De fÃ¸lgende objekter er maskerede _af_ '.GlobalEnv':
+
+    register_format, simulate_cohort
+
+
+VedhÃ¦fter pakke: 'ggplot2'
+
+Det fÃ¸lgende objekt er maskeret fra 'package:lava':
+
+    vars
+
+
+VedhÃ¦fter pakke: 'plotly'
+
+Det fÃ¸lgende objekt er maskeret fra 'package:ggplot2':
+
+    last_plot
+
+Det fÃ¸lgende objekt er maskeret fra 'package:lava':
+
+    colorbar
+
+Det fÃ¸lgende objekt er maskeret fra 'package:stats':
+
+    filter
+
+Det fÃ¸lgende objekt er maskeret fra 'package:graphics':
+
+    layout
+
+Advarselsbeskeder:
+1: pakke 'targets' blev bygget under R version 4.4.3 
+2: pakke 'prodlim' blev bygget under R version 4.4.3 
+3: pakke 'foreach' blev bygget under R version 4.4.3 
+4: pakke 'ggplot2' blev bygget under R version 4.4.3 
+5: pakke 'plotly' blev bygget under R version 4.4.3 
+> > p0
+$max_follow
+[1] 1.5
+
+$baseline_variables
+$baseline_variables$sex
+[1] "binomial"
+
+$baseline_variables$age
+[1] "normal"
+
+
+$baseline_visit
+$baseline_visit$randomized_treatment
+[1] "binomial"
+
+
+$absorbing_events
+$absorbing_events$death
+[1] "Weibull"
+
+$absorbing_events$dropout
+[1] "Weibull"
+
+
+$intermediate_events
+$intermediate_events$nausea.and.vomiting.symptoms
+[1] "Weibull"
+
+
+$visit_measurements
+$visit_measurements$hba1c_change
+[1] "normal"
+
+
+$visit_events
+$visit_events$metformin
+[1] "binomial"
+
+
+$visit_schedule
+$visit_schedule$mean
+[1] 1
+
+$visit_schedule$sd
+[1] 0
+
+$visit_schedule$skip
+[1] 0
+
+$visit_schedule$schedule
+ [1]  0  1  2  3  4  5  6  7  8  9 10
+
+$visit_schedule$minimum_time_between_visits
+[1] 0
+
+
+$parameter_values
+$parameter_values$intercept_sex
+[1] 0
+
+$parameter_values$intercept_age
+[1] 0
+
+$parameter_values$intercept_randomized_treatment
+[1] 0
+
+$parameter_values$intercept_hba1c_change
+[1] 0
+
+$parameter_values$intercept_metformin
+[1] 0
+
+$parameter_values$var_age
+[1] 1
+
+$parameter_values$var_hba1c_change
+[1] 1
+
+$parameter_values$scale_death
+[1] 0.01
+
+$parameter_values$scale_dropout
+[1] 0.01
+
+$parameter_values$scale_nausea.and.vomiting.symptoms
+[1] 0.01
+
+$parameter_values$effect_age_sex
+[1] 0
+
+$parameter_values$effect_sex_age
+[1] 0
+
+$parameter_values$effect_sex_randomized_treatment
+[1] 0
+
+$parameter_values$effect_age_randomized_treatment
+[1] 0
+
+$parameter_values$effect_sex_metformin
+[1] 0
+
+$parameter_values$effect_age_metformin
+[1] 0
+
+$parameter_values$effect_sex_hba1c_change
+[1] 0
+
+$parameter_values$effect_age_hba1c_change
+[1] 0
+
+$parameter_values$effect_sex_death
+[1] 0
+
+$parameter_values$effect_age_death
+[1] 0
+
+$parameter_values$effect_sex_dropout
+[1] 0
+
+$parameter_values$effect_age_dropout
+[1] 0
+
+$parameter_values$effect_sex_nausea.and.vomiting.symptoms
+[1] 0
+
+$parameter_values$effect_age_nausea.and.vomiting.symptoms
+[1] 0
+
+$parameter_values$effect_nausea.and.vomiting.symptoms_death
+[1] 0
+
+$parameter_values$effect_hba1c_change_death
+[1] 0
+
+$parameter_values$effect_metformin_death
+[1] 0
+
+$parameter_values$effect_nausea.and.vomiting.symptoms_dropout
+[1] 0
+
+$parameter_values$effect_hba1c_change_dropout
+[1] 0
+
+$parameter_values$effect_metformin_dropout
+[1] 0
+
+$parameter_values$effect_hba1c_change_nausea.and.vomiting.symptoms
+[1] 0
+
+$parameter_values$effect_metformin_nausea.and.vomiting.symptoms
+[1] 0
+
+
+> p0$parameter_values <- modifyList(
++         p0$parameter_values,
++         list(
++             scale_death = 2,
++             scale_dropout = 0,
++             scale_nausea.and.vomiting.symptoms = 0,
++             effect_lira_hba1c_change = -0.8,
++             effect_lira_nausea.and.vomiting.symptoms = 0.7,
++             effect_lira_dropout = 0.2,
++             effect_lira_death = -0.1,
++             effect_placebo_hba1c_change = 0,
++             effect_placebo_nausea.and.vomitting.symptoms = 0,
++             effect_placebo_death = 0
++         )
++     )
++     
++     d <- do.call(
++         simulate_cohort,
++         c(
++             list(
++                 n = 1000000,
++                 post_baseline_visit_hook = randomize_baseline_treatment
++             ),
++             p0
++         )
++     )
++ Fejl i (function (n, seed = NULL, max_follow, baseline_variables = NULL,  : 
+  objekt 'current_event' blev ikke fundet
+> source("c:/Users/sads0006/Desktop/followme-SAMS/functions/simulate_cohort.R")
+> source("c:/Users/sads0006/Desktop/followme-SAMS/functions/")
+Fejl i file(filename, "r", encoding = encoding) : 
+  kan ikke Ã¥bne forbindelsen
+In addition: Advarselsbesked:
+I file(filename, "r", encoding = encoding) :
+  kan ikke Ã¥bne fil 'c:/Users/sads0006/Desktop/followme-SAMS/functions/': Permission denied
+> source("c:/Users/sads0006/Desktop/followme-SAMS/functions")
+Fejl i file(filename, "r", encoding = encoding) : 
+  kan ikke Ã¥bne forbindelsen
+In addition: Advarselsbesked:
+I file(filename, "r", encoding = encoding) :
+  kan ikke Ã¥bne fil 'c:/Users/sads0006/Desktop/followme-SAMS/functions': Permission denied
+> targets::tar_source("c:/Users/sads0006/Desktop/followme-SAMS/functions/")
+tar_source() only sources R scripts. Ignoring non-R files: c:/Users/sads0006/Desktop/followme-SAMS/functions/.DS_Store
+> p0$parameter_values <- modifyList(
++         p0$parameter_values,
++         list(
++             scale_death = 2,
++             scale_dropout = 0,
++             scale_nausea.and.vomiting.symptoms = 0,
++             effect_lira_hba1c_change = -0.8,
++             effect_lira_nausea.and.vomiting.symptoms = 0.7,
++             effect_lira_dropout = 0.2,
++             effect_lira_death = -0.1,
++             effect_placebo_hba1c_change = 0,
++             effect_placebo_nausea.and.vomitting.symptoms = 0,
++             effect_placebo_death = 0
++         )
++     )
++     
++     d <- do.call(
++         simulate_cohort,
++         c(
++             list(
++                 n = 1000000,
++                 post_baseline_visit_hook = randomize_baseline_treatment
++             ),
++             p0
++         )
++     )
++ 
++     d[lira == 1 & event == "death", .N]
++ 
++     d[lira == 1, by = id, .N]
++ Fejl i (function (n, seed = NULL, max_follow, baseline_variables = NULL,  : 
+  objekt 'current_event' blev ikke fundet
+> > Fejl: objekt 'd' blev ikke fundet
+> > Fejl: objekt 'd' blev ikke fundet
+> d <- do.call(
++         simulate_cohort,
++         c(
++             list(
++                 n = 1000000,
++                 post_baseline_visit_hook = randomize_baseline_treatment
++             ),
++             p0
++         )
++     )
++ Fejl i (function (n, seed = NULL, max_follow, baseline_variables = NULL,  : 
+  objekt 'current_event' blev ikke fundet
+> d <- do.call(
++         simulate_cohort,
++         c(
++             list(
++                 n = 1000000,
++                 post_baseline_visit_hook = randomize_baseline_treatment
++             ),
++             p0
++         )
++     )
++ Fejl i (function (n, seed = NULL, max_follow, baseline_variables = NULL,  : 
+  objekt 'current_event' blev ikke fundet
+> p0
+$max_follow
+[1] 1.5
+
+$baseline_variables
+$baseline_variables$sex
+[1] "binomial"
+
+$baseline_variables$age
+[1] "normal"
+
+
+$baseline_visit
+$baseline_visit$randomized_treatment
+[1] "binomial"
+
+
+$absorbing_events
+$absorbing_events$death
+[1] "Weibull"
+
+$absorbing_events$dropout
+[1] "Weibull"
+
+
+$intermediate_events
+$intermediate_events$nausea.and.vomiting.symptoms
+[1] "Weibull"
+
+
+$visit_measurements
+$visit_measurements$hba1c_change
+[1] "normal"
+
+
+$visit_events
+$visit_events$metformin
+[1] "binomial"
+
+
+$visit_schedule
+$visit_schedule$mean
+[1] 1
+
+$visit_schedule$sd
+[1] 0
+
+$visit_schedule$skip
+[1] 0
+
+$visit_schedule$schedule
+ [1]  0  1  2  3  4  5  6  7  8  9 10
+
+$visit_schedule$minimum_time_between_visits
+[1] 0
+
+
+$parameter_values
+$parameter_values$intercept_sex
+[1] 0
+
+$parameter_values$intercept_age
+[1] 0
+
+$parameter_values$intercept_randomized_treatment
+[1] 0
+
+$parameter_values$intercept_hba1c_change
+[1] 0
+
+$parameter_values$intercept_metformin
+[1] 0
+
+$parameter_values$var_age
+[1] 1
+
+$parameter_values$var_hba1c_change
+[1] 1
+
+$parameter_values$scale_death
+[1] 2
+
+$parameter_values$scale_dropout
+[1] 0
+
+$parameter_values$scale_nausea.and.vomiting.symptoms
+[1] 0
+
+$parameter_values$effect_age_sex
+[1] 0
+
+$parameter_values$effect_sex_age
+[1] 0
+
+$parameter_values$effect_sex_randomized_treatment
+[1] 0
+
+$parameter_values$effect_age_randomized_treatment
+[1] 0
+
+$parameter_values$effect_sex_metformin
+[1] 0
+
+$parameter_values$effect_age_metformin
+[1] 0
+
+$parameter_values$effect_sex_hba1c_change
+[1] 0
+
+$parameter_values$effect_age_hba1c_change
+[1] 0
+
+$parameter_values$effect_sex_death
+[1] 0
+
+$parameter_values$effect_age_death
+[1] 0
+
+$parameter_values$effect_sex_dropout
+[1] 0
+
+$parameter_values$effect_age_dropout
+[1] 0
+
+$parameter_values$effect_sex_nausea.and.vomiting.symptoms
+[1] 0
+
+$parameter_values$effect_age_nausea.and.vomiting.symptoms
+[1] 0
+
+$parameter_values$effect_nausea.and.vomiting.symptoms_death
+[1] 0
+
+$parameter_values$effect_hba1c_change_death
+[1] 0
+
+$parameter_values$effect_metformin_death
+[1] 0
+
+$parameter_values$effect_nausea.and.vomiting.symptoms_dropout
+[1] 0
+
+$parameter_values$effect_hba1c_change_dropout
+[1] 0
+
+$parameter_values$effect_metformin_dropout
+[1] 0
+
+$parameter_values$effect_hba1c_change_nausea.and.vomiting.symptoms
+[1] 0
+
+$parameter_values$effect_metformin_nausea.and.vomiting.symptoms
+[1] 0
+
+$parameter_values$effect_lira_hba1c_change
+[1] -0.8
+
+$parameter_values$effect_lira_nausea.and.vomiting.symptoms
+[1] 0.7
+
+$parameter_values$effect_lira_dropout
+[1] 0.2
+
+$parameter_values$effect_lira_death
+[1] -0.1
+
+$parameter_values$effect_placebo_hba1c_change
+[1] 0
+
+$parameter_values$effect_placebo_nausea.and.vomitting.symptoms
+[1] 0
+
+$parameter_values$effect_placebo_death
+[1] 0
+
+
+> d <- do.call(
++         simulate_cohort,
++         c(
++             list(
++                 n = 10000,
++                 post_baseline_visit_hook = randomize_baseline_treatment
++             ),
++             p0
++         )
++     )
++ Fejl i (function (n, seed = NULL, max_follow, baseline_variables = NULL,  : 
+  objekt 'current_event' blev ikke fundet
+> ### minimal_simulation.R --- 
++ #----------------------------------------------------------------------
++ ## Author: 
++ ## Created: jun 18 2026 (13:21) 
++ ## Version: 
++ ## Last-Updated: sep  1 2026 (13:28) 
++ ##           By: SADS0006
++ ##     Update #: 9
++ #----------------------------------------------------------------------
++ ## 
++ ### Commentary: 
++ ## 
++ ### Change Log:
++ #----------------------------------------------------------------------
++ ## 
++ ### Code:
++ 
++ #------------------------Different-hooks---------------------------
++ 
++ # Randomized baseline treatment
++ randomize_baseline_treatment <- function(X){
++     X[,lira := 1*(randomized_treatment == 1)]
++     X[,placebo := 1*(randomized_treatment == 0)]
++     X[,randomized_treatment := NULL]
++ }
++ 
++ # Post visit medication stop
++ randomized_medication_stop <- function(X){
++     #X[]
++ }
++ 
++ 
++ #------------------------Function-defining-setting-list------------
++ get_minimal_setting <- function(){
++     #browser()
++     max_follow <- 1.5
++ 
++     baseline_variables <- list(
++         sex = "binomial",
++         age = "normal"
++     )
++ 
++     baseline_visit <- list(
++         randomized_treatment = "binomial"
++     )
++ 
++     absorbing_events <- list(
++         death = "Weibull",
++         dropout = "Weibull"
++     )
++     
++     intermediate_events <- list(
++         nausea.and.vomiting.symptoms = "Weibull" 
++     )
++ 
++     visit_measurements <- list(
++         hba1c_change = "normal"
++     )
++ 
++     visit_events <- list(
++         metformin = "binomial"
++     )
++ 
++     visit_schedule <- list(
++         mean = 1, sd = 0, skip = 0,
++         schedule = seq(from = 0, to = 10, by = 1),
++         minimum_time_between_visits = 0
++     )
++ 
++     ipv = initialize_parameter_values(
++         baseline_variables = baseline_variables,
++         absorbing_events = absorbing_events,
++         baseline_visit = baseline_visit,
++         intermediate_events = intermediate_events,
++         visit_measurements = visit_measurements,
++         visit_events = visit_events,
++         visit_schedule = visit_schedule)
++ 
++     list(
++         max_follow = max_follow,
++         baseline_variables = baseline_variables,
++         baseline_visit = baseline_visit,
++         absorbing_events = absorbing_events,
++         intermediate_events = intermediate_events,
++         visit_measurements = visit_measurements,
++         visit_events = visit_events,
++         visit_schedule = visit_schedule,
++         parameter_values = ipv
++     )
++ }
++ 
++ 
++ #------------------------Analysis/Results--------------------------
++ 
++ if (FALSE){
++ 
++     # Need the initialization steps for the sim.
++     # tar_load_globals outside or here?
++     
++ 
++     p0 <- get_minimal_setting()
++ 
++     p0$parameter_values <- modifyList(
++         p0$parameter_values,
++         list(
++             scale_death = 2,
++             scale_dropout = 0,
++             scale_nausea.and.vomiting.symptoms = 0,
++             effect_lira_hba1c_change = -0.8,
++             effect_lira_nausea.and.vomiting.symptoms = 0.7,
++             effect_lira_dropout = 0.2,
++             effect_lira_death = -0.1,
++             effect_placebo_hba1c_change = 0,
++             effect_placebo_nausea.and.vomitting.symptoms = 0,
++             effect_placebo_death = 0
++         )
++     )
++     
++     d <- do.call(
++         simulate_cohort,
++         c(
++             list(
++                 n = 10000,
++                 post_baseline_visit_hook = randomize_baseline_treatment
++             ),
++             p0
++         )
++     )
++ 
++     d[lira == 1 & event == "death", .N]
++ 
++     d[lira == 1, by = id, .N]
++     
++ }
++ 
++ 
++ 
++ 
++ 
++ 
++ ######################################################################
++ ### minimal_simulation.R ends here
++ > NROW(current_event)>0
+Fejl: objekt 'current_event' blev ikke fundet
+> source("c:/Users/sads0006/Desktop/rtmle-SAMS/R/simulate_cohort.R")
+> targets::tar_load_globals("c:/Users/sads0006/Desktop/rtmle-SAMS/R/simulate_cohort.R")
+Fejl i eval(parse(file = script, keep.source = TRUE), envir = envir) : 
+  ugyldigt 'envir'-argument af typen 'character'
+> targets::tar_load_globals("c:/Users/sads0006/Desktop/rtmle-SAMS/R/")
+Fejl i eval(parse(file = script, keep.source = TRUE), envir = envir) : 
+  ugyldigt 'envir'-argument af typen 'character'
+> targets::tar_load_globals(path =  "c:/Users/sads0006/Desktop/rtmle-SAMS/R/")
+Fejl i targets::tar_load_globals(path = "c:/Users/sads0006/Desktop/rtmle-SAMS/R/") : 
+  ubrugt argument (path = "c:/Users/sads0006/Desktop/rtmle-SAMS/R/")
+> setwd("c:/Users/sads0006/Desktop/rtmle-SAMS/R/simulate_cohort.R")
+Fejl i setwd("c:/Users/sads0006/Desktop/rtmle-SAMS/R/simulate_cohort.R") : 
+  cannot change working directory
+> setwd("c:/Users/sads0006/Desktop/rtmle-SAMS/R/")
+> targets::tar_load_globals()
+Error:
+! could not find file _targets.R. Main functions like tar_make() require a target script file (default: _targets.R) to define the pipeline. Functions tar_edit() and tar_script() can help. 
+> setwd("c:/Users/sads0006/Desktop/rtmle-SAMS/")
+> targets::tar_load_globals()
+Error:
+! could not find file _targets.R. Main functions like tar_make() require a target script file (default: _targets.R) to define the pipeline. Functions tar_edit() and tar_script() can help. 
+> p0 <- get_minimal_setting()
++ 
++     p0$parameter_values <- modifyList(
++         p0$parameter_values,
++         list(
++             scale_death = 2,
++             scale_dropout = 0,
++             scale_nausea.and.vomiting.symptoms = 0,
++             effect_lira_hba1c_change = -0.8,
++             effect_lira_nausea.and.vomiting.symptoms = 0.7,
++             effect_lira_dropout = 0.2,
++             effect_lira_death = -0.1,
++             effect_placebo_hba1c_change = 0,
++             effect_placebo_nausea.and.vomitting.symptoms = 0,
++             effect_placebo_death = 0
++         )
++     )
++     
++     d <- do.call(
++         simulate_cohort,
++         c(
++             list(
++                 n = 10000,
++                 post_baseline_visit_hook = randomize_baseline_treatment
++             ),
++             p0
++         )
++     )
++ 
++     d[lira == 1 & event == "death", .N]
++ 
++     d[lira == 1, by = id, .N]
+> + > [1] 4395
+> > Key: <id>
+         id     N
+      <int> <int>
+   1:     1     2
+   2:     3     2
+   3:     7     2
+   4:     8     2
+   5:     9     2
+  ---            
+4930:  9982     2
+4931:  9990     2
+4932:  9995     2
+4933:  9997     2
+4934: 10000     2
+> d
+Key: <id, time, event>
+Index: <lira>
+          id      time    event   sex         age nausea.and.vomiting.symptoms hba1c_change  lira placebo metformin
+       <int>     <num>   <fctr> <num>       <num>                        <num>        <num> <num>   <num>     <num>
+    1:     1 0.0000000 baseline     1 -0.09407612                            0            0     1       0         0
+    2:     1 0.4093525    death     1 -0.09407612                            0            0     1       0         0
+    3:     2 0.0000000 baseline     1  0.58878195                            0            0     0       1         0
+    4:     2 0.8069393    death     1  0.58878195                            0            0     0       1         0
+    5:     3 0.0000000 baseline     0  1.46359250                            0            0     1       0         0
+   ---                                                                                                             
+21529:  9998 0.5669202    death     0  0.47588385                            0            0     0       1         0
+21530:  9999 0.0000000 baseline     1  1.40638878                            0            0     0       1         0
+21531:  9999 0.9911274    death     1  1.40638878                            0            0     0       1         0
+21532: 10000 0.0000000 baseline     0 -0.56062667                            0            0     1       0         0
+21533: 10000 0.5026767    death     0 -0.56062667                            0            0     1       0         0
+> summary(d(
++ )
++ )
+Fejl i d() : could not find function "d"
+> summary(d)
+       id             time             event            sex              age            nausea.and.vomiting.symptoms  hba1c_change     
+ Min.   :    1   Min.   :0.0000   baseline:10000   Min.   :0.0000   Min.   :-3.889096   Min.   :0                    Min.   :-3.88642  
+ 1st Qu.: 2507   1st Qu.:0.0000   visit   : 1533   1st Qu.:0.0000   1st Qu.:-0.671047   1st Qu.:0                    1st Qu.: 0.00000  
+ Median : 5011   Median :0.2057   death   : 9031   Median :0.0000   Median : 0.001603   Median :0                    Median : 0.00000  
+ Mean   : 5006   Mean   :0.3871   dropout :  969   Mean   :0.4901   Mean   :-0.011609   Mean   :0                    Mean   :-0.06285  
+ 3rd Qu.: 7505   3rd Qu.:0.7163                    3rd Qu.:1.0000   3rd Qu.: 0.653004   3rd Qu.:0                    3rd Qu.: 0.00000  
+ Max.   :10000   Max.   :1.5000                    Max.   :1.0000   Max.   : 4.010021   Max.   :0                    Max.   : 3.05338  
+      lira           placebo         metformin      
+ Min.   :0.0000   Min.   :0.0000   Min.   :0.00000  
+ 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.00000  
+ Median :0.0000   Median :1.0000   Median :0.00000  
+ Mean   :0.4973   Mean   :0.5027   Mean   :0.06855  
+ 3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:0.00000  
+ Max.   :1.0000   Max.   :1.0000   Max.   :1.00000  
+> p0$

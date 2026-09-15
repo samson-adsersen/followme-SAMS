@@ -3,9 +3,9 @@
 ## Author: 
 ## Created: jun  2 2026 (12:44) 
 ## Version: 
-## Last-Updated: jun 18 2026 (13:12) 
+## Last-Updated: sep 15 2026 (14:38) 
 ##           By: SADS0006
-##     Update #: 49
+##     Update #: 50
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -195,7 +195,8 @@ if (FALSE) {
     # LEADER setting generates essentially empty list
     # Effects/intercept/variance all 0 - scale = 0.01 for all.
     # For this example start filling out intercept/variance/scale
-
+    p <- get_LEADER_setting()
+    
     # Baseline distributions
     p$parameter_values$intercept_age <- 60
     p$parameter_values$var_age <- 10

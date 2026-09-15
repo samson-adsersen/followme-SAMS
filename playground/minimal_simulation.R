@@ -3,9 +3,9 @@
 ## Author: 
 ## Created: jun 18 2026 (13:21) 
 ## Version: 
-## Last-Updated: jun 18 2026 (13:59) 
+## Last-Updated: sep 15 2026 (14:38) 
 ##           By: SADS0006
-##     Update #: 6
+##     Update #: 14
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -45,7 +45,8 @@ get_minimal_setting <- function(){
     )
 
     absorbing_events <- list(
-        death <- "Weibull"
+        death = "Weibull",
+        dropout = "Weibull"
     )
     
     intermediate_events <- list(
@@ -92,38 +93,77 @@ get_minimal_setting <- function(){
 #------------------------Analysis/Results--------------------------
 
 if (FALSE){
-
+    # Need the initialization steps for the sim.
+    # tar_load_globals outside or here?
+    r <- list.files("c:/Users/sads0006/Desktop/rtmle-SAMS/R/",
+                    pattern =  "\\.[Rr]$",
+                    full.names = TRUE)
+    invisible(lapply(r, source))
+    source("c:/Users/sads0006/Desktop/followme-SAMS/playground/minimal_simulation.R")
+    source("c:/Users/sads0006/Desktop/followme-SAMS/functions/register_format.R")
+    
+    # Get setting and set parameter values
     p0 <- get_minimal_setting()
-
     p0$parameter_values <- modifyList(
         p0$parameter_values,
         list(
-            scale_death = 10000000000,
-            scale_nausea.and.vomiting.symptoms = 1/5,
-            effect_lira_hba1c_change = -0.8,
-            effect_lira_nausea.and.vomiting.symptoms = 0.7,
+            scale_death = 0.1,
+            scale_dropout = 0,
+            scale_nausea.and.vomiting.symptoms = 0,
+            effect_lira_nausea.and.vomiting.symptoms = 1,
             effect_lira_dropout = 0.2,
-            effect_lira_death = -0.1,
-            effect_placebo_hba1c_change = 0,
-            effect_placebo_nausea.and.vomitting.symptoms = 0,
-            effect_placebo_death = 0
-        )
-    )
-    
+            effect_lira_death = -1
+        ))
+
     d <- do.call(
         simulate_cohort,
         c(
             list(
-                n = 1000,
+                n = 10000,
                 post_baseline_visit_hook = randomize_baseline_treatment
             ),
             p0
         )
     )
 
-    d[lira == 1 & event == "death", .N]
+    subject.data <- d[, .(lira =  first(lira),
+                          placebo =  first(placebo),
+                          death = as.integer(any(event == "death"))),
+                      by = id]
+    naive <- subject.data[, .(risk = mean(death)), by = lira]
+    est <- naive$risk[2] - naive$risk[1]
+    
+    rd <- register_format(d)
+    
 
-    d[lira == 1, by = id, .N]
+    # rTMLE estimates
+    x <- rtmle_init(
+        time_grid = seq(0, 1.5, .5),
+        name_id = "id",
+        name_outcome = "death",
+        name_competing =  NULL,
+        name_censoring = "dropout"
+    )
+    x <- add_baseline_data(x, rd$baseline_data)
+    x <- do.call(add_long_data, c(list(x), rd[-1]))
+    # Setup protocols
+    x <- protocol(x,
+                  name = "use_lira",
+                  intervention = data.table(time = x$intervention_nodes,
+                                            "lira" = factor(1,0:1)))
+    x <- protocol(x,
+                  name = "placebo",
+                  intervention = data.table(time = x$intervention_nodes,
+                                            "placebo" = factor(1,0:1)))
+    x <- long_to_wide(x)
+    x <- prepare_rtmle_data(x)
+    x <- model_formula(x, exclusion_rules = list("placebo" = "lira_0", "lira" = "placebo_0"))
+    x <- run_rtmle(x, time_horizon = 3, learner = learner)
+    
+    
+    # Counts of events / total for naive estimate
+    d[lira == 1 & event == "death", .N]/d[lira == 1 & event == "baseline", .N]
+    d[placebo == 1 & event == "death", .N]/d[placebo == 1 & event == "baseline", .N]
     
 }
 
