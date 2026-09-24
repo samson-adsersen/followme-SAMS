@@ -35,15 +35,18 @@ Go through naive estimates (shouldn't work)
 
 then into rtmle estimate (should work)
 
-** Checking leader estimates?
+
 
 
 
 
 
 * PROGRESS CHECKLIST
-** TODO outcomes happen before first scheduled visit atm.
 Minimal   || baseline --> visit --> outcome
+
+seemingly there is a bias even in the simplest case only with an effect of
+lira on outcome (death).
+
 Extending || baseline --> visit --> visit ... --> outcome
 Extending || abrupt starts/stops of treatment.
 Extending || leader?
