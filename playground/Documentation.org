@@ -1,13 +1,22 @@
 
 * Simulation documentation
 
+This, doc is meant as explanation and follow along for the sim
+work done to verify analyses with the register targeted maximum
+likelihood estimation (rtmle) package, and checking for bias
+in different simple cases - hopefully extending as far as simulating
+LEADER data based on past results and verifying that a subsequent
+analysis recreates similar estimates (self-consistency).
+
+
 ** LEADER simulation setup
 
 Go through general setup for simulate cohort (Distributions
-and variables, hooks etc.)
+and variables, hooks etc.). Then argue for the distributions
+choosen for different variables.
 
-Then no effects yet. Output of LEADER data gives effects.
-Can we trust these - leads nicely into next points
+Then no effects yet (how does it look). Output of LEADER data
+gives effects. Can we trust these - leads nicely into next points
 
 ** Minimal simulation setup
 
@@ -21,20 +30,46 @@ starts or what?. Random dropout.
 2 treatments [lira(glutide) / placebo], 1 visit, 1 outcome, same baseline
 2 treatments, few visits, 1 outcome, same baseline
 
-Should introduce different baseline? Might be beyond scope.
+Should introduce different baseline (treatment could/should be
+based on baseline variables)? 
 
-*** Continued treatment
+*** Continuous treatment
 
-Go through naive estimate, N of outcomes / N total (should work)
+Minimal simulation setting. People stay on randomized treatment. No dropout
+within the timeframe.
 
-Maybe good for reference to have rtmle estimate (should work)
+Go through naive estimate, N of outcomes / N total
 
-*** Abrupt stops in treatment
+Kaplan-Meier reproduces the naive estimates
 
-Go through naive estimates (shouldn't work)
+Maybe good for reference to have rtmle estimate - something weird happening
+now they do at least not agree completely. Seems that the placebo count in rtmle
+instead mimics the risk of death for the entire cohort.
+
+* TODO ask Thomas.
+
+In general end result would be nice as boxplots of estimates over
+many sims.
+
+
+*** Introducing abrupt stops in treatment
+
+Introduce post visit hook to provide stops in treatment, based on intermediate events /
+bloodwork - Maybe introduce bmi as a variable as well? (If weight drops too far below mean
+maybe makes sense to stop)
+Furthermore introduce censoring (dropout_scale non-zero)
+
+Go through naive estimate (shouldn't work, gives resuts biased by
+different underlying effects, as well as censoring/treatment changes)
+
+Statistical model(s) Kaplan-Meier (Aalen-Johansen) (should work)
 
 then into rtmle estimate (should work)
 
+*** Competing event(s)
+
+
+*** Non-randomized treatment
 
 
 
@@ -43,16 +78,26 @@ then into rtmle estimate (should work)
 
 * PROGRESS CHECKLIST
 Minimal   || baseline --> visit --> outcome
+* DONE 
+CLOSED: [2026-10-01 to 10:54]
 
-seemingly there is a bias even in the simplest case only with an effect of
-lira on outcome (death).
+right now not the smartest solution to the minimal sim. Randomized
+treatment already encodes all the info for lira and placebo.
 
-Extending || baseline --> visit --> visit ... --> outcome
+
 Extending || abrupt starts/stops of treatment.
-Extending || leader?
-
-ask thomas whether there needs to be to seperate treatments
-or treatment plus placebo is allright. 
+* TODO
 
 
-long_to_wide.R line 325
+Extending || Competing outcomes
+* TODO
+
+Extending || LEADER (using actual data, give parameters to
+LEADER sim and check that the input matches the output over many
+different sims)
+* TODO
+
+Along the way will introduce effects as they start to make sense.
+
+
+

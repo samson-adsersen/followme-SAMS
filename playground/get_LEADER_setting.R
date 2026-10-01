@@ -3,9 +3,9 @@
 ## Author: 
 ## Created: jun  2 2026 (12:44) 
 ## Version: 
-## Last-Updated: sep 15 2026 (14:38) 
+## Last-Updated: okt  1 2026 (12:59) 
 ##           By: SADS0006
-##     Update #: 50
+##     Update #: 51
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -140,8 +140,7 @@ get_LEADER_setting <- function(){
         dpp4 = "binomial"
     )
 
-    # Thomas says here 0,1,3,6,12 and so on. Should it be random?
-    # Change later he says. Have made 6 month grid. Add 1,3 in post?
+    # Scheduled visits (and how well they are adhered to)
     visit_schedule <- list(
         mean = 6, sd = 0, skip = 0,
         schedule = c(1,3,seq(from = 6, to = max_follow, by = 6)),

@@ -1,0 +1,153 @@
+### extended_simulation.R --- 
+#----------------------------------------------------------------------
+## Author: 
+## Created: okt  1 2026 (10:17) 
+## Version: 
+## Last-Updated: okt  1 2026 (13:18) 
+##           By: SADS0006
+##     Update #: 9
+#----------------------------------------------------------------------
+## 
+### Commentary: 
+## 
+### Change Log:
+#----------------------------------------------------------------------
+## 
+### Code:
+
+
+# Randomized baseline treatment
+randomize_baseline_treatment <- function(X){
+    X[,lira := 1*(randomized_treatment == 1)]
+    X[,placebo := 1*(randomized_treatment == 0)]
+    #X[,randomized_treatment := NULL]
+}
+
+# Post visit medication stop
+randomized_treatment_changes <- function(update_information, event_history){
+
+    # Want to incorporate changes in baseline variables from visit measurements (changes)
+    ## for (vm in visit_measurements) {
+    ##     for (bv in baseline_variables) {
+    ##         if (startsWith(vm, bv)) {
+    ##             update_info[, bv := bv - vm]
+    ##         }
+    ## }}}
+        
+    # Want to incorporate intermediate events
+    update_information[, lira := 1*(treatment_update == 1)]
+    update_information[, placebo := 1*(treatment_update == 0)]
+}
+
+
+#------------------------Function-defining-setting-list------------
+get_extended_setting <- function(){
+    
+    max_follow <- 10
+
+    baseline_variables <- list(
+        sex = "binomial",
+        age = "normal",
+        hba1c = "normal"
+    )
+
+    baseline_visit <- list(
+        randomized_treatment = "binomial"
+    )
+
+    absorbing_events <- list(
+        death = "Weibull",
+        dropout = "Weibull"
+    )
+    
+    intermediate_events <- list(
+        nausea.and.vomiting.symptoms = "Weibull" 
+    )
+
+    visit_measurements <- list(
+        hba1c_change = "normal"
+    )
+
+    visit_events <- list(
+        # right now does not really make sense for a medical study
+        # but i think in principle could just have multiple different
+        # update variables affected by different parameters.
+        update_treatment = "binomial"
+    )
+
+    visit_schedule <- list(
+        mean = 1, sd = 0, skip = 0,
+        schedule = seq(from = 0, to = 10, by = 1),
+        minimum_time_between_visits = 0
+    )
+
+    ipv = initialize_parameter_values(
+        baseline_variables = baseline_variables,
+        absorbing_events = absorbing_events,
+        baseline_visit = baseline_visit,
+        intermediate_events = intermediate_events,
+        visit_measurements = visit_measurements,
+        visit_events = visit_events,
+        visit_schedule = visit_schedule)
+
+    list(
+        max_follow = max_follow,
+        baseline_variables = baseline_variables,
+        baseline_visit = baseline_visit,
+        absorbing_events = absorbing_events,
+        intermediate_events = intermediate_events,
+        visit_measurements = visit_measurements,
+        visit_events = visit_events,
+        visit_schedule = visit_schedule,
+        parameter_values = ipv
+    )
+}
+
+
+#------------------------Analysis/Results--------------------------
+
+if (FALSE){
+    # Need the initialization steps for the sim.
+    # tar_load_globals outside or here?
+    
+    r <- list.files("c:/Users/sads0006/Desktop/rtmle/R/",
+                    pattern =  "\\.[Rr]$",
+                    full.names = TRUE)
+    invisible(lapply(r, source))
+    source("c:/Users/sads0006/Desktop/followme-SAMS/playground/minimal_simulation.R")
+    source("c:/Users/sads0006/Desktop/followme-SAMS/functions/initialize_parameter_values.R")
+    
+    library(data.table)
+    
+    # Get setting and set parameter values
+    p <- get_extended_setting()
+    p$parameter_values <- modifyList(
+        p$parameter_values,
+        list(
+            scale_death = 0.1,
+            scale_dropout = 0,
+            scale_nausea.and.vomiting.symptoms = 0,
+            effect_lira_nausea.and.vomiting.symptoms = 0,
+            effect_lira_dropout = 0,
+            effect_lira_death = -1
+        ))
+
+    
+    # Simulate cohort
+    d <- do.call(
+        simulate_cohort,
+        c(
+            list(
+                n = 1000,
+                post_baseline_visit_hook = randomize_baseline_treatment,
+                post_visit_hook = randomized_treatment_changes
+            ),
+            p
+        )
+    )
+
+    
+}
+
+######################################################################
+### extended_simulation.R ends here

@@ -3,9 +3,9 @@
 ## Author: 
 ## Created: jun 18 2026 (13:21) 
 ## Version: 
-## Last-Updated: sep 24 2026 (15:25) 
+## Last-Updated: okt  1 2026 (12:31) 
 ##           By: SADS0006
-##     Update #: 29
+##     Update #: 31
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -23,12 +23,6 @@ randomize_baseline_treatment <- function(X){
     X[,placebo := 1*(randomized_treatment == 0)]
     #X[,randomized_treatment := NULL]
 }
-
-# Post visit medication stop
-randomized_medication_stop <- function(X){
-    #X[]
-}
-
 
 #------------------------Function-defining-setting-list------------
 get_minimal_setting <- function(){
@@ -125,26 +119,42 @@ if (FALSE){
         simulate_cohort,
         c(
             list(
-                n = 100000,
+                n = 1,
                 post_baseline_visit_hook = randomize_baseline_treatment
             ),
             p0
         )
     )
 
-    # Naive estimates. Does it change things if deaths occur after the
-    # specified time grid for rtmle.
-    data <- d[time <= 1.5]
-    data <- d[, .(lira = first(lira),
-                  placebo = first(placebo),
-                  death = as.integer(any(event == "death"))),
-              by = id]
-    naive <- subject.data[, .(risk = mean(death)), by = lira]
-    est <- naive$risk[2] - naive$risk[1]
-    
     rd <- register_format(d,
                           treatment_variables = c("lira", "placebo")
                           )
+    
+    # Naive estimates. Does it change things if deaths occur after the
+    # specified time grid for rtmle. Yes, now made sure they are not counted
+    # so risk of specific outcome associated with a treatment:
+    # number of outcome with treatment by time t / number randomized with said treatment
+    data <- d[, .(time =  max(time),
+                  death = as.integer(any(event == "death")),
+                  treatment = fifelse(first(lira) == 1, "lira", "placebo")
+                  ),
+              by = id]
+    drate_lira <- data[treatment == "lira" & death == 1 & time <= 1.5, .N]/data[treatment == "lira",.N]
+    drate_placebo <- data[treatment == "placebo" & death == 1 & time <= 1.5, .N]/data[treatment == "placebo",.N]
+    drate_all <- data[death == 1 & time <= 1.5,.N]/data[,.N]
+    diff <- drate_all - drate_lira
+
+    # Kaplan-Meier risk estimate
+    grid <- seq(0, 1.5, .5)
+    fit <- prodlim::prodlim(
+                        prodlim::Hist(time,death) ~ treatment,
+                        data = data
+                    )
+    risk <- predict(
+                         fit,
+                         newdata = data.frame(treatment =  c("lira","placebo")),
+                         times = grid,
+                         type = "risk")
     
     # rTMLE estimates
     x <- rtmle_init(
@@ -173,15 +183,10 @@ if (FALSE){
                                             "placebo" = factor(rep(1,3),levels = 0:1)))
     x <- prepare_rtmle_data(x)
     x <- model_formula(x, exclusion_rules = list("placebo" = "lira_0", "lira" = "placebo_0"))
-    x <- target(x,name = "LEADER",regimes = c("placebo","lira"))
+    x <- target(x,name = "Treatment",regimes = c("placebo","lira"))
     x <- run_rtmle(x, time_horizon = 3, learner = "learn_glmnet")
     
 }
-
-
-
-
-
 
 ######################################################################
 ### minimal_simulation.R ends here
