@@ -3,9 +3,9 @@
 ## Author: 
 ## Created: jun 18 2026 (13:21) 
 ## Version: 
-## Last-Updated: okt  1 2026 (12:31) 
-##           By: SADS0006
-##     Update #: 31
+## Last-Updated: okt  8 2026 (15:28) 
+##           By: sads0006
+##     Update #: 32
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -90,7 +90,6 @@ get_minimal_setting <- function(){
 
 if (FALSE){
     # Need the initialization steps for the sim.
-    # tar_load_globals outside or here?
     
     r <- list.files("c:/Users/sads0006/Desktop/rtmle/R/",
                     pattern =  "\\.[Rr]$",
@@ -119,7 +118,7 @@ if (FALSE){
         simulate_cohort,
         c(
             list(
-                n = 1,
+                n = 10000,
                 post_baseline_visit_hook = randomize_baseline_treatment
             ),
             p0
@@ -136,13 +135,13 @@ if (FALSE){
     # number of outcome with treatment by time t / number randomized with said treatment
     data <- d[, .(time =  max(time),
                   death = as.integer(any(event == "death")),
-                  treatment = fifelse(first(lira) == 1, "lira", "placebo")
+                  treatment = factor(first(lira) == 1, levels = c("lira", "placebo"))
                   ),
               by = id]
     drate_lira <- data[treatment == "lira" & death == 1 & time <= 1.5, .N]/data[treatment == "lira",.N]
     drate_placebo <- data[treatment == "placebo" & death == 1 & time <= 1.5, .N]/data[treatment == "placebo",.N]
     drate_all <- data[death == 1 & time <= 1.5,.N]/data[,.N]
-    diff <- drate_all - drate_lira
+    naive_diff <- drate_placebo - drate_lira
 
     # Kaplan-Meier risk estimate
     grid <- seq(0, 1.5, .5)
@@ -154,7 +153,8 @@ if (FALSE){
                          fit,
                          newdata = data.frame(treatment =  c("lira","placebo")),
                          times = grid,
-                         type = "risk")
+        type = "risk")
+    meier_diff <- risk$'treatment=placebo'[4] - risk$'treatment=lira'[4]
     
     # rTMLE estimates
     x <- rtmle_init(
@@ -180,11 +180,13 @@ if (FALSE){
     x <- protocol(x,
                   name = "placebo",
                   intervention = data.table(time = x$intervention_nodes,
-                                            "placebo" = factor(rep(1,3),levels = 0:1)))
+                                            "lira" = factor(rep(0,3),levels = 0:1)))
     x <- prepare_rtmle_data(x)
     x <- model_formula(x, exclusion_rules = list("placebo" = "lira_0", "lira" = "placebo_0"))
     x <- target(x,name = "Treatment",regimes = c("placebo","lira"))
     x <- run_rtmle(x, time_horizon = 3, learner = "learn_glmnet")
+
+    rtmle_diff <- x$estimate$Main_analysis$Estimate[1]-x$estimate$Main_analysis$Estimate[2]
     
 }
 

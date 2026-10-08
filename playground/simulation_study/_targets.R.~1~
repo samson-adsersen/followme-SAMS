@@ -1,0 +1,40 @@
+### _targets.R --- 
+#----------------------------------------------------------------------
+## Author: Sams
+## Created: okt  8 2026 (13:03) 
+## Version: 
+## Last-Updated: okt  8 2026 (13:07) 
+##           By: sads0006
+##     Update #: 1
+#----------------------------------------------------------------------
+## 
+### Commentary: 
+## 
+### Change Log:
+#----------------------------------------------------------------------
+## 
+### Code:
+
+library(targets)
+library(tarchetypes)
+
+targets::tar_source(
+    c("c:/Users/sads0006/Desktop/rtmle/R/",
+      "c:/Users/sads0006/Desktop/followme-SAMS/playground/minimal_simulation.R",
+      "c:/Users/sads0006/Desktop/followme-SAMS/functions/initialize_parameter_values.R"
+      ))
+
+targets::tar_option_set()
+
+
+
+
+
+
+
+
+
+
+
+######################################################################
+### _targets.R ends here

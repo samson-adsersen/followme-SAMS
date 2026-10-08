@@ -3,9 +3,9 @@
 ## Author: 
 ## Created: okt  1 2026 (10:17) 
 ## Version: 
-## Last-Updated: okt  1 2026 (14:03) 
-##           By: SADS0006
-##     Update #: 15
+## Last-Updated: okt  8 2026 (14:53) 
+##           By: sads0006
+##     Update #: 21
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -24,29 +24,24 @@ randomize_baseline_treatment <- function(X){
 }
 
 # Post visit medication stop
-randomized_treatment_changes <- function(update_information, event_history, visit_measurements, baseline_variables){
+update_data <- function(update_information, visit_measurements, baseline_variables){
 
     # Want to incorporate changes in baseline variables from visit measurements (changes)
     for (vm in names(visit_measurements)) {
         for (bv in names(baseline_variables)) {
             if (startsWith(vm, bv)) {
-                update_information[, (bv) :=  get(bv) + get(vm)]
+                set(update_information,j = bv, value = update_information[[bv]]+update_information[[vm]])
             }
-    }}
-        
-    # Want to incorporate intermediate events
-    update_information[, lira := 1*(update_treatment == 1)]
-    update_information[, placebo := 1*(update_treatment == 0)]
+        }}
 
     update_information[]
-
 }
 
 
 #------------------------Function-defining-setting-list------------
 get_extended_setting <- function(){
     
-    max_follow <- 2
+    max_follow <- 10
 
     baseline_variables <- list(
         sex = "binomial",
@@ -75,7 +70,8 @@ get_extended_setting <- function(){
         # right now does not really make sense for a medical study
         # but i think in principle could just have multiple different
         # update variables affected by different parameters.
-        update_treatment = "binomial"
+        lira = "binomial",
+        placebo = "binomial"
     )
 
     visit_schedule <- list(
@@ -129,6 +125,7 @@ if (FALSE){
         list(
             scale_death = 0.1,
             scale_dropout = 0,
+            intercept_update_treatment = 0.1,
             scale_nausea.and.vomiting.symptoms = 0,
             effect_lira_nausea.and.vomiting.symptoms = 0,
             effect_lira_dropout = 0,
@@ -143,12 +140,16 @@ if (FALSE){
             list(
                 n = 10000,
                 post_baseline_visit_hook = randomize_baseline_treatment,
-                post_visit_hook = randomized_treatment_changes
+                pre_treatment_update_hook = randomized_treatment_changes
             ),
             p
         )
     )
 
+    rd <- register_format(d,
+                          treatment_variables = c("lira", "placebo")
+                          )
+    
     
 }
 
