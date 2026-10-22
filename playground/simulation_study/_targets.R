@@ -3,9 +3,9 @@
 ## Author: Sams
 ## Created: okt  8 2026 (13:03) 
 ## Version: 
-## Last-Updated: okt  8 2026 (15:28) 
+## Last-Updated: okt 22 2026 (13:52) 
 ##           By: sads0006
-##     Update #: 10
+##     Update #: 44
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -24,11 +24,47 @@ targets::tar_source(
       "c:/Users/sads0006/Desktop/followme-SAMS/functions/initialize_parameter_values.R"
       ))
 
+simple_run <- function(setting, n, selector, alpha){
+    learner <- list(
+        name = paste("glmnet", selector, alpha, sep = "_"),
+        fun = "learn_glmnet",
+        alpha = alpha,
+        selector = selector)
+    
+    d <- do.call(
+        simulate_cohort,
+        c(
+            list(
+                n = n,
+                post_baseline_visit_hook = randomize_baseline_treatment
+            ),
+            setting
+        )
+    )
+
+    naive_risk <- naive_risk_est(d, 1.5, c("lira", "placebo"), "death")
+    KM_risk <- KM_risk_est(d, 1.5, 0.5, c("lira", "placebo"), "death")
+    rtmle_risk <- rtmle_risk_est(d, 1.5, 0.5, c("lira", "placebo"), "death", "dropout", learner)
+
+    out <- data.table(
+        naive = naive_risk$diff,
+        KM = KM_risk$diff,
+        rTMLE = rtmle_risk$diff)
+    
+    out[]
+}
+
+
 targets::tar_option_set(packages = c("data.table"))
 
 list(
+
+    #-------------------------------------------------------------------------
+    #-------------------------Minimal-simulation-setup------------------------
+    #-------------------------------------------------------------------------
+
     tar_target(
-        name = simplest_setting,
+        name = simple_setting,
         command = {
             p <- get_minimal_setting()
             p$parameter_values <- modifyList(
@@ -39,92 +75,57 @@ list(
                     effect_lira_dropout = 0,
                     effect_lira_death = -1
                 ))
+            p[]
         }
     ),
 
+    tarchetypes::tar_map_rep(
+                     name = simple_sim_results,
+                     command = {
+                         simple_run(simple_setting, n, selector, alpha)
+                     },
+                     values = tidyr::expand_grid(
+                                          n = c(1000, 2000),
+                                          selector = c("min",
+                                                       "1se",
+                                                       "undersmooth"),
+                                          alpha = c(0, 0.5, 1)),
+                     reps = 2
+                 ),
+
     tar_target(
-        name = cohort1,
+        name = simple_sim_boxplot,
         command = {
-            d <- do.call(
-                simulate_cohort,
-                c(
-                    list(
-                        n = 100000,
-                        post_baseline_visit_hook = randomize_baseline_treatment
-                    ),
-                    simplest_setting
-                ))
-        })#,
+            data <- data.table::as.data.table(simple_sim_results)
+            ggplot2::ggplot(
+                         data,
+                         ggplot2::aes(
+                                      x = factor(n),
+                                      y = rTMLE - naive,
+                                      fill = paste("glmnet",
+                                                   selector,
+                                                   alpha,
+                                                   sep = "_"))) +
+                ggplot2::geom_boxplot(
+                             position = ggplot2::position_dodge(width = 0.8)) +
+                ggplot2::geom_hline(
+                             yintercept = 0,
+                             linetype = "dashed") +
+                ggplot2::labs(
+                             x = "Sample size",
+                             y = "Estimated difference in risk of death \nfor treatment protocols LIRA and PLACEBO",
+                             fill = "Learner",
+                             title = "Distribution of estimates across simulation runs") +
+                ggplot2::theme_minimal() +
+                ggplot2::theme(
+                             plot.title = ggplot2::element_text(hjust = 0.5)) +
+                ggplot2::scale_y_continuous(
+                         limits = c(-mean(data$naive), mean(data$naive)),
+                         breaks = seq(-0.2, 0.2, by = 0.05)
+                     )
+        }
+    )
 
-    ## tar_target(
-    ##     name = naive_est1,
-    ##     command = {
-    ##         # crude risk estimation
-    ##         data <- cohort1[, .(time =  max(time),
-    ##                       death = as.integer(any(event == "death")),
-    ##                       treatment = fifelse(first(lira) == 1, "lira", "placebo")
-    ##                       ),
-    ##                   by = id]
-    ##         drate_lira <- data[treatment == "lira" & death == 1 & time <= 1.5, .N]/data[treatment == "lira",.N]
-    ##         drate_placebo <- data[treatment == "placebo" & death == 1 & time <= 1.5, .N]/data[treatment == "placebo",.N]
-    ##         drate_all <- data[death == 1 & time <= 1.5,.N]/data[,.N]
-    ##         diff <- drate_placebo - drate_lira
-    ##     }),
-
-    ## tar_target(
-    ##     name = kaplan_meier1,
-    ##     command = {
-    ##         # Kaplan-Meier risk estimate
-    ##         data <- cohort1[, .(time =  max(time),
-    ##                       death = as.integer(any(event == "death")),
-    ##                       treatment = fifelse(first(lira) == 1, "lira", "placebo")
-    ##                       ),
-    ##                   by = id]
-    ##         grid <- seq(0, 1.5, .5)
-    ##         fit <- prodlim::prodlim(
-    ##                             prodlim::Hist(time,death) ~ treatment,
-    ##                             data = data
-    ##                         )
-    ##         risk <- predict(
-    ##             fit,
-    ##             newdata = data.frame(treatment =  c("lira","placebo")),
-    ##             times = grid,
-    ##             type = "risk")
-    ##     }),
-
-    ## tar_target(
-    ##     name = rtmle1,
-    ##     command = {
-    ##         # rtmle estimates
-    ##         rd <- register_format(cohort1)
-    ##         x <- rtmle_init(
-    ##             time_grid = seq(0, 1.5, .5),
-    ##             name_id = "id",
-    ##             name_outcome = "death",
-    ##             name_competing =  NULL,
-    ##             name_censoring = "dropout"
-    ##         )
-    ##         x <- add_baseline_data(x, rd$baseline_data)
-    ##         x <- add_long_data(x,outcome_data = rd$timevar_data$death,
-    ##                            competing_data = NULL,
-    ##                            censored_data = rd$timevar_data$dropout,
-    ##                            timevar_data = rd$timevar_data[c("hba1c_change","lira","nausea.and.vomiting.symptoms","placebo")])
-    ##         x <- discretize_data(x,
-    ##                              start_followup_date = 0)
-    ##         # Setup protocols
-    ##         x <- protocol(x,
-    ##                       name = "lira",
-    ##                       intervention = data.table(time = x$intervention_nodes,
-    ##                                                 "lira" = factor(rep(1,3),levels = 0:1)))
-    ##         x <- protocol(x,
-    ##                       name = "placebo",
-    ##                       intervention = data.table(time = x$intervention_nodes,
-    ##                                                 "lira" = factor(rep(0,3),levels = 0:1)))
-    ##         x <- prepare_rtmle_data(x)
-    ##         x <- model_formula(x, exclusion_rules = list("placebo" = "lira_0", "lira" = "placebo_0"))
-    ##         x <- target(x,name = "Treatment",regimes = c("placebo","lira"))
-    ##         x <- run_rtmle(x, time_horizon = 3, learner = "learn_glmnet")
-    ##     })
 
 )
 

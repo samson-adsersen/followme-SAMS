@@ -1,3 +1,17 @@
+* TO-DO LIST concrete things, thoughts on general progress at the bottom
+** TODO Fix protocols for the rtmle estimate in minimal sim
+** DONE Look at post visit hook variables perhaps included in event_history
+CLOSED: [2026-10-22 to 12:27]
+as far as i can tell it is fine as is. The thoughts of Thomas are for different hook
+** TODO setup boxplot functions and general simulation result framework in the targets file
+** TODO ask thomas - forgot which steps made most sense
+confounding, starts/stops in treatment, dropout, competing outcomes.
+
+** TODO introduce confounding effects. Fits well with treatment update hook
+** DONE Minimal || baseline --> outcome (no effects)
+CLOSED: [2026-10-01 to 10:54]
+** TODO without visit for minimal. Not super important for now.
+
 
 * Simulation documentation
 
@@ -47,10 +61,9 @@ Maybe good for reference to have rtmle estimate - something weird happening
 now they do at least not agree completely. Seems that the risk associated with
 the placebo in rtmle instead mimics the risk of death for the entire cohort.
 
-* TODO ask Thomas.
-
 In general end result would be nice as boxplots of estimates over
 many sims, as done previously to asses bias in general.
+
 
 
 *** Introducing abrupt stops in treatment
@@ -77,12 +90,12 @@ then into rtmle estimate (should work)
 
 
 
-* PROGRESS CHECKLIST
+* PROGRESS
 
 **** REMEMBER ****
 Looking for true effect value will look something like creating a large
 dataset with no confounding effects and estimating either with naive or
-kaplan-meier.
+kaplan-meier (depending on reference scenario).
 
 Keep steps simple. Introduce one change in the simulations at a time.
 
@@ -90,9 +103,7 @@ Make more systematic way to look at differences between truth. Boxplot
 structure etc.
 
 
-Minimal   || baseline --> outcome (no effects)
-* DONE 
-CLOSED: [2026-10-01 to 10:54]
+
 
 randomized treatment
 
@@ -102,23 +113,23 @@ treatment already encodes all the info for lira and placebo.
 Could just keep the one variable, and then introduce different protocols.
 Seemingly if both placebo/lira variables were used to set the protocols
 lead to different estimates.
-* TODO without visit for minimal. Not super important for now.
 
 baseline (effect on treatment)
 baseline --> outcome.
 then baseline --> treatment --> outcome (effects of values on updated treatments)
 Extending || Confounding effects (treatment affected by covariate(s) that
 also affect the risk of outcome directly)
-* TODO introduce confounding effects. Fits well with treatment update hook
+
+Thinking introduce censoring --> then not randomized treatment (confounding variables).
+
+Then,
 
 Extending || Competing outcomes (censoring eg. or introduce both death
 and diabetes, or cv.death and all.cause.mortality)
-* TODO
 
 Extending || LEADER (using actual data, give parameters to
 LEADER sim and check that the input matches the output over many
 different sims)
-* TODO
 
 Along the way will introduce effects as they start to make sense.
 
