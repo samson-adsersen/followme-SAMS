@@ -1,9 +1,11 @@
 * TO-DO LIST concrete things, thoughts on general progress at the bottom
-** TODO Fix protocols for the rtmle estimate in minimal sim
+** DONE Fix protocols for the rtmle estimate in minimal sim
+CLOSED: [2026-10-25 Sun 13:01]
 ** DONE Look at post visit hook variables perhaps included in event_history
 CLOSED: [2026-10-22 to 12:27]
 as far as i can tell it is fine as is. The thoughts of Thomas are for different hook
-** TODO setup boxplot functions and general simulation result framework in the targets file
+** DONE setup boxplot functions and general simulation result framework in the targets file
+CLOSED: [2026-10-25 Sun 13:01]
 ** TODO ask thomas - forgot which steps made most sense
 confounding, starts/stops in treatment, dropout, competing outcomes.
 
@@ -47,7 +49,7 @@ starts or what?. Random dropout.
 Should introduce different baseline (treatment could/should be
 based on baseline variables)? 
 
-*** Continuous treatment
+*** Continuous randomized treatment
 
 Minimal simulation setting. People stay on randomized treatment. No dropout
 within the timeframe.
@@ -63,6 +65,20 @@ the placebo in rtmle instead mimics the risk of death for the entire cohort.
 
 In general end result would be nice as boxplots of estimates over
 many sims, as done previously to asses bias in general.
+
+
+*** Introducing dropout/censoring
+Kaplan-Meier (KM) works, naive does not. rTMLE should reproduce KM estimates.
+
+
+*** Introducing confounding - non-randomized treatment
+Talk with Thomas about implications. Could do either with censoring (KM) or
+without (naive) for reference.
+
+
+*** Introducing competing outcomes
+Look at cv.death vs all.cause.mortality (or non.cv.death) eg. - Aalen Johansen
+as the estimate.
 
 
 
@@ -82,8 +98,6 @@ then into rtmle estimate (should work)
 
 *** Competing event(s)
 
-
-*** Non-randomized treatment
 
 
 
