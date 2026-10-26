@@ -3,9 +3,9 @@
 ## Author: Sams
 ## Created: okt  8 2026 (13:03) 
 ## Version: 
-## Last-Updated: Oct 26 2026 (18:25) 
+## Last-Updated: Oct 26 2026 (18:29) 
 ##           By: Samson Alfred Adsersen
-##     Update #: 106
+##     Update #: 107
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -225,32 +225,6 @@ list(
             data <- data.table::as.data.table(simple_sim_results)
             reference <- as.numeric(simple_risk_reference)
             data[, norm_diff := (rTMLE - reference)/reference]
-            ## ggplot2::ggplot(
-            ##              data,
-            ##              ggplot2::aes(
-            ##                           x = factor(n),
-            ##                           y = norm_diff,
-            ##                           fill = paste("glmnet",
-            ##                                        selector,
-            ##                                        alpha,
-            ##                                        sep = "_"))) +
-            ##     ggplot2::geom_boxplot(
-            ##                  position = ggplot2::position_dodge(width = 0.8)) +
-            ##     ggplot2::geom_hline(
-            ##                  yintercept = 0,
-            ##                  linetype = "dashed") +
-            ##     ggplot2::labs(
-            ##                  x = "Sample size",
-            ##                  y = "Estimated difference in risk of death \nfor treatment protocols LIRA and PLACEBO",
-            ##                  fill = "Learner",
-            ##                  title = "Distribution of normalized difference in estimates across simulation runs") +
-            ##     ggplot2::theme_minimal() +
-            ##     ggplot2::theme(
-            ##                  plot.title = ggplot2::element_text(hjust = 0.5)) +
-            ##     ggplot2::scale_y_continuous(
-            ##              limits = c(-1, 1),
-            ##              breaks = seq(-1, 1, by = 0.1)
-            ##          )
             plot_boxplot_comparison(data, "n", "norm_diff", c("Sample sizes", "Normalized difference wrt. reference"),
                                     "Display of bias by different learner specs and sample sizes", c(-1,1), 0.1)
     }),
