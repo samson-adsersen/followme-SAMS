@@ -139,7 +139,7 @@ Thinking introduce censoring --> then not randomized treatment (confounding vari
 Then,
 
 Extending || Competing outcomes (censoring eg. or introduce both death
-and diabetes, or cv.death and all.cause.mortality)
+and diabetes, or cv.death and all.cause.mortality/non.cv.death)
 
 Extending || LEADER (using actual data, give parameters to
 LEADER sim and check that the input matches the output over many

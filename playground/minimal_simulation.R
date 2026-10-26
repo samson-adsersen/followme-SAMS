@@ -3,9 +3,9 @@
 ## Author: 
 ## Created: jun 18 2026 (13:21) 
 ## Version: 
-## Last-Updated: okt 22 2026 (13:35) 
-##           By: sads0006
-##     Update #: 39
+## Last-Updated: Oct 26 2026 (18:25) 
+##           By: Samson Alfred Adsersen
+##     Update #: 40
 #----------------------------------------------------------------------
 ## 
 ### Commentary: 
@@ -85,6 +85,7 @@ get_minimal_setting <- function(){
     )
 }
 
+
 #------------------------Helper-functions--------------------------
 
 naive_risk_est <- function(cohort, t0,
@@ -160,8 +161,7 @@ KM_risk_est <- function(cohort, t0, dt, competing_treatments, outcome){
 }
 
 
-
-### TJEK TJEK - SOMETHING WRONG WITH PROTOCOLS
+### TJEK TJEK - SOMETHING WRONG WITH PROTOCOLS - FIXED I THINK
 rtmle_risk_est <- function(cohort, t0, dt, competing_treatments,
                            outcome, censoring, learner){
 
